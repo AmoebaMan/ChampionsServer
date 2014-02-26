@@ -1,15 +1,11 @@
-
 package net.amoebaman.championsserver.utils;
 
 import java.lang.reflect.*;
-import java.util.*;
 
 import org.bukkit.*;
 import org.bukkit.entity.*;
 
 /**
- * 
- * @author AmoebaMan
  * 
  * Assorted methods for manipulating packets to spawn fake Ender Dragons and show players a
  * status bar at the top of the screen using their health bar.  This class uses reflection, so
@@ -17,12 +13,15 @@ import org.bukkit.entity.*;
  * don't change).
  * 
  * This is a clean-up/fix-up/refactoring of SoThatsIt's code, which originally did nearly the
- * same thing, but was less readable, had less features, and was broken in some places.
+ * same thing, but was less readable, had less features, and was broken in some places.  It also
+ * uses a trimmed down version of my own {@link PlayerMap} class to store the fake dragons.
+ * 
+ * @author AmoebaMan
  *
  */
 public class StatusBarAPI {
 
-    private static Map<String, FakeDragon> DRAGONS = new HashMap<String, FakeDragon>();
+    private static PlayerMap<FakeDragon> DRAGONS = new PlayerMap<FakeDragon>();
 
     /**
      * Checks to see if the player is currently being displayed a status bar via fake Ender Dragon.
@@ -37,7 +36,7 @@ public class StatusBarAPI {
      * @return true if this API has a record of the player being sent a bar
      */
     public static boolean hasStatusBar(Player player){
-        return DRAGONS.containsKey(player.getName()) && DRAGONS.get(player.getName()) != null;
+        return DRAGONS.containsKey(player) && DRAGONS.get(player) != null;
     }
 
     /**
@@ -47,8 +46,8 @@ public class StatusBarAPI {
      */
     public static void removeStatusBar(Player player){
         if(hasStatusBar(player)){
-            sendPacket(player, DRAGONS.get(player.getName()).getDestroyPacket());
-            DRAGONS.remove(player.getName());
+            sendPacket(player, DRAGONS.get(player).getDestroyPacket());
+            DRAGONS.remove(player);
         }
     }
 
@@ -66,9 +65,8 @@ public class StatusBarAPI {
      */
     public static void setStatusBar(Player player, String text, float percent) {
 
-        String playerName = player.getName();
-        FakeDragon dragon = DRAGONS.containsKey(playerName) ? DRAGONS.get(playerName) : null;
-        
+        FakeDragon dragon = DRAGONS.containsKey(player) ? DRAGONS.get(player) : null;
+
         if(text.length() > 64)
             text = text.substring(0, 63);
         if(percent > 1.0f)
@@ -82,7 +80,7 @@ public class StatusBarAPI {
         if (dragon == null) {
             dragon = new FakeDragon(player.getLocation().add(0, -200, 0), text, percent);
             sendPacket(player, dragon.getSpawnPacket());
-            DRAGONS.put(playerName, dragon);
+            DRAGONS.put(player, dragon);
         }
         else {
             dragon.setName(text);
@@ -92,7 +90,7 @@ public class StatusBarAPI {
         }
 
     }
-    
+
     /**
      * Removes the status bar for all players on the server.  See {@link #removeStatusBar(Player)}.
      */
@@ -100,7 +98,7 @@ public class StatusBarAPI {
         for(Player each : Bukkit.getOnlinePlayers())
             removeStatusBar(each);
     }
-    
+
     /**
      * Sets the status bar for all players on the server.  See {@link #setStatusBar(Player, String, float)}.
      * @param text some text with 64 characters or less
@@ -316,7 +314,7 @@ public class StatusBarAPI {
                 }
             return equal;
         }
-        
+
     }
-    
+
 }
