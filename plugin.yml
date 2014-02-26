@@ -1,7 +1,7 @@
 main: net.amoebaman.championsserver.ChampionsServer
 
-name: FFAMaster
-version: 0.1
+name: ChampionsServer
+version: 1.0
 author: AmoebaMan
 description: Manages and maintains critical aspects of Maelstrom's open-world FFA PvP server
 depend: [WorldGuard, KitMaster]

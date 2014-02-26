@@ -160,7 +160,7 @@ public class ChampionsServer extends JavaPlugin{
 	 * Statically gets a reference to this plugin from Bukkit's plugin manager
 	 * @return this
 	 */
-	public static ChampionsServer plugin(){ return (ChampionsServer) Bukkit.getPluginManager().getPlugin("FFAMaster"); }
+	public static ChampionsServer plugin(){ return (ChampionsServer) Bukkit.getPluginManager().getPlugin("ChampionsServer"); }
 	
 	/**
 	 * Statically gets a reference to this plugin's console logger from Bukkit's plugin manager
