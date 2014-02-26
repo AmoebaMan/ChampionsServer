@@ -1,0 +1,56 @@
+main: net.amoebaman.ffamaster.FFAMaster
+
+name: FFAMaster
+version: 0.1
+author: AmoebaMan
+description: Manages and maintains critical aspects of Maelstrom's open-world FFA PvP server
+depend: [WorldGuard, KitMaster]
+
+commands:
+
+  tester:
+
+  debug-ffamaster:
+    aliases: [debug-ffa, dffa, debug]
+    description: Prints debugging info to the console
+    usage: /debug-ffamaster
+    permissions: ffamaster.admin
+
+  check-pt:
+    aliases: [cpt]
+    description: Checks to see how much "pt" your current inventory is worth
+    usage: /check-pt
+    
+  view-storage-chest:
+    aliases: [storage]
+    description: Opens and displays a player's storage chest
+    usage: /view-storage-chest [player]
+    permissions: ffamaster.admin
+    
+  get-custom-item:
+    aliases: [customitem, citem]
+    description: Gives you a custom item from the config
+    usage: /get-custom-item <name> [#]
+    permissions: ffamaster.admin
+ 
+  shards:
+    aliases: []
+    description: Lists who holds each of the shards
+    usage: /shards
+  
+  shard-spawn:
+    aliases: []
+    description: Sets the spawn point for a shard
+    usage: /shard-spawn <number>
+    permissions: ffamaster.admin
+    
+  legends:
+    aliases: []
+    description: Lists who holds each of the legends
+    usage: /legends
+    
+  legend-spawn:
+    aliases: []
+    description: Sets the spawn point for a legendary item
+    usage: /legend-spawn <name>
+    permissions: ffamaster.admin

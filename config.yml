@@ -1,0 +1,186 @@
+database:
+  url: localhost
+  username: root
+  password: none
+  
+custom-items:
+  looting_charm:
+    item: gold_nugget
+    name: Looting Charm
+    lore:
+    - May cause foes to drop an item on death
+    - More charms increase the chance
+  vorpal_charm:
+    item: gold_nugget
+    name: Vorpal Charm
+    lore:
+    - '&4One, two, one two, and through, and through,'
+    - '&4The Vorpal Blade went snicker-snack.'
+    - '&4He left it dead, and with its head,'
+    - '&4He went gallumphing back.'
+    - May cause foes to drop a trophy on death
+    - More charms increase the chance
+  clairvoyance_charm:
+    item: ghast_tear
+    name: Clairvoyance Charm
+    lore:
+    - Extends the range of the binoculars and seeker
+    - More charms increase the range
+  clouding_charm:
+    item: ghast_tear
+    name: Clouding Charm
+    lore:
+    - Obscures the vision of foes attempting to scout you
+    - More charms increase the clouding
+  boss_charm:
+    item: MAGMA_CREAM
+    name: Boss Charm
+    lore:
+    - Allows you to carry more PT worth of equipment into battle
+    - More charms further raise the PT cap
+    - '&cAll boss charms are lost on death'
+  fire_resistance_talisman:
+    item: nether_star
+    name: Fire Resistance Talisman
+    lore:
+    - Keeps the bearer from overheating
+  night_vision_talisman:
+    item: nether_star
+    name: Night Vision Talisman
+    lore:
+    - Enhances the bearer's vision
+  water_breathing_talisman:
+    item: nether_star
+    name: Water Breathing Talisman
+    lore:
+    - Provides the bearer with unlimited oxygen underwater
+  invisibility_talisman:
+    item: nether_star
+    name: Invisibility Talisman
+    lore:
+    - Hides the bearer's body from view
+  jump_boost_talisman:
+    item: nether_star
+    name: Jump Boost Talisman
+    lore:
+    - Lightens the bearer
+    - More talismans enhance the effect
+  swiftness_talisman:
+    item: nether_star
+    name: Swiftness Talisman
+    lore:
+    - Speeds the bearer
+    - More talismans enhance the effect
+  resistance_talisman:
+    item: nether_star
+    name: Resistance Talisman
+    lore:
+    - Toughens the bearer
+    - More talismans enhance the effect
+  regeneration_talisman:
+    item: nether_star
+    name: Regeneration Talisman
+    lore:
+    - Continually heals the bearer
+    - More talismans enhance the effect
+  strength_talisman:
+    item: nether_star
+    name: Strength Talisman
+    lore:
+    - Strengthens the bearer
+    - More talismans enhance the effect
+  nausea_talisman:
+    item: nether_star
+    name: Nausea Talisman
+    lore:
+    - Confuses and disorients the bearer
+  slowness_talisman:
+    item: nether_star
+    name: Slowness Talisman
+    lore:
+    - Slows the bearer
+    - More talismans enhance the effect
+  weakness_talisman:
+    item: nether_star
+    name: Weakness Talisman
+    lore:
+    - Weakens the bearer
+    - More talismans enhance the effect
+  absorption_talisman:
+    item: nether_star
+    name: Absorption Talisman
+    lore:
+    - Provides absorption health for the bearer
+    - More talismans enhance the effect
+  health_boost_talisman:
+    item: nether_star
+    name: Health Boost Talisman
+    lore:
+    - Provides a health boost for the bearer
+    - More talismans enhance the effect
+  binoculars:
+    item: eye_of_ender
+    name: Binoculars
+    lore:
+    - Right click to scout an enemy
+    - Certain charms can enhance or degrade its performance
+  seeker:
+    item: compass
+    name: Seeker
+    lore:
+    - Right click to cycle seeking mode
+    - Guides the user to nearby foes that match its seeking mode
+  skokkrag:
+    item: gold_sword sharpness:5
+    name: '&6Skokkrag'
+    lore:
+    - '&4Legendary blade of the heavens'
+    - '&r'
+    - '&4The electrons took a detour through Liam''s'
+    - '&4body on their way to the ground.  He felt a'
+    - '&4slight tingle.  Then he felt nothing at all.'
+  skietvlam:
+    item: wooden_sword sharpness:5 fire_aspect:1
+    name: '&6Skietvlam'
+    lore:
+    - '&4Legendary blade of the underworld'
+    - '&r'
+    - '&4The circus audience thought Benjamin was a'
+    - '&4simple fire-eater.  The poor thugs that tried'
+    - '&4to mug him after the show found otherwise.'
+  lugvlaag:
+    item: iron_sword sharpness:5 knockback:1
+    name: '&6Lugvlaag'
+    lore:
+    - '&4Legendary blade of the skies'
+    - '&r'
+    - '&4The wind wanted to take his kite, but'
+    - '&4Edgar hung on fiercely.  So the wind'
+    - '&4picked him up and took him along too.'
+  aardegraf:
+    item: stone_sword sharpness:5
+    name: '&6Aardegraf'
+    lore:
+    - '&4Legendary blade of the earth'
+    - '&r'
+    - '&4The maw of the earth opened wide and'
+    - '&4swallowed him whole, and that was the'
+    - '&4last anyone saw of poor Bernard.'
+  calesvol:
+    item: diamond_sword sharpness:10
+    name: '&6Calesvol'
+    lore:
+    - '&4Legendary blade of tremendous might'
+    - '&r'
+    - '&4Whosoever wields this blade inherits'
+    - '&4dominion over all men of all races, on'
+    - '&4all lands to the ends of the earth.'
+  wellspring_charm:
+    item: sunflower
+    name: &6Wellspring Charm
+    lore:
+    - '&4Formed by the union of all Wellspring Shards'
+    - '&4A great power emmanates from its core...'
+    
+    
+    
