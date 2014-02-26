@@ -1,6 +1,5 @@
 package net.amoebaman.ffamaster;
 
-import net.amoebaman.ffamaster.utils.BarAPI;
 import net.amoebaman.ffamaster.utils.ChatUtils;
 import net.amoebaman.ffamaster.utils.CommandController.CommandHandler;
 import net.minecraft.util.com.google.common.collect.Lists;
@@ -13,11 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class CommandListener {
-
-    @CommandHandler(name = "tester")
-    public void debugFFAMasterCommand(Player sender, String[] args){
-        BarAPI.setBar(sender, args[0].equals("kill") ? "" : args[0], Integer.parseInt(args[1]), false);
-    }
 
     @CommandHandler(name = "check-pt")
     public void checkPtCommand(Player player, String[] args){

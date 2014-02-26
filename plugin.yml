@@ -8,8 +8,6 @@ depend: [WorldGuard, KitMaster]
 
 commands:
 
-  tester:
-
   debug-ffamaster:
     aliases: [debug-ffa, dffa, debug]
     description: Prints debugging info to the console
