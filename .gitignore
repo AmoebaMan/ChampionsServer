@@ -35,6 +35,8 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
-.classpath
-.project
+target
 .settings
+.classpath
+.options
+.project
