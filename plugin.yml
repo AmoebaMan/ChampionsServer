@@ -32,7 +32,7 @@ commands:
     permissions: ffamaster.admin
  
   shards:
-    aliases: []
+    aliases: [shard, charm]
     description: Lists who holds each of the shards
     usage: /shards
   
@@ -43,7 +43,7 @@ commands:
     permissions: ffamaster.admin
     
   legends:
-    aliases: []
+    aliases: [legend]
     description: Lists who holds each of the legends
     usage: /legends
     
