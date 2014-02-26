@@ -1,4 +1,4 @@
-main: net.amoebaman.ffamaster.FFAMaster
+main: net.amoebaman.championsserver.ChampionsServer
 
 name: FFAMaster
 version: 0.1

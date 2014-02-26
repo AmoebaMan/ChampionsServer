@@ -1,7 +1,7 @@
-package net.amoebaman.ffamaster;
+package net.amoebaman.championsserver;
 
-import net.amoebaman.ffamaster.utils.ChatUtils;
-import net.amoebaman.ffamaster.utils.CommandController.CommandHandler;
+import net.amoebaman.championsserver.utils.ChatUtils;
+import net.amoebaman.championsserver.utils.CommandController.CommandHandler;
 import net.minecraft.util.com.google.common.collect.Lists;
 
 import org.bukkit.Bukkit;
@@ -15,8 +15,8 @@ public class CommandListener {
 
     @CommandHandler(name = "check-pt")
     public void checkPtCommand(Player player, String[] args){
-        player.sendMessage(ChatColor.ITALIC + "That " + TradeHandler.getName(player.getItemInHand()) + " is worth " + FFAMaster.getPtValue(player.getItemInHand()) + "PT");
-        player.sendMessage(ChatColor.ITALIC + "Your inventory is worth " + FFAMaster.getPtValue(player.getInventory()) + "PT");
+        player.sendMessage(ChatColor.ITALIC + "That " + TradeHandler.getName(player.getItemInHand()) + " is worth " + ChampionsServer.getPtValue(player.getItemInHand()) + "PT");
+        player.sendMessage(ChatColor.ITALIC + "Your inventory is worth " + ChampionsServer.getPtValue(player.getInventory()) + "PT");
     }
 
     @CommandHandler(name = "view-storage-chest")
@@ -28,7 +28,7 @@ public class CommandListener {
             player.sendMessage("Unable to find player \"" + args[0] + "\"");
         else{
             player.sendMessage("Opening " + target.getName() + "'s storage");
-            player.openInventory(FFAMaster.sql.loadChest(target));
+            player.openInventory(ChampionsServer.sql.loadChest(target));
         }
     }
 
@@ -51,8 +51,8 @@ public class CommandListener {
     public void shardsCommand(CommandSender sender, String[] args){
         OfflinePlayer holder = ShardHandler.getCharmHolder();
         if(holder == null || holder.getName().equals("~CHARM~"))
-            for(int i = 0; i < FFAMaster.sql.getNumShards(); i++){
-                holder = FFAMaster.sql.getShardHolder(i);
+            for(int i = 0; i < ChampionsServer.sql.getNumShards(); i++){
+                holder = ChampionsServer.sql.getShardHolder(i);
                 if(sender.equals(holder))
                     sender.sendMessage(ChatColor.GREEN + "You hold Wellspring Shard #" + (i+1));
                 else if(holder == null)
@@ -76,8 +76,8 @@ public class CommandListener {
     @CommandHandler(name = "shard-spawn")
     public void shardSpawnCommand(Player player, String[] args){
         int num = Integer.parseInt(args[0]) - 1;
-        FFAMaster.sql.setShardSpawn(num, player.getLocation());
-        if(FFAMaster.sql.getShardHolder(num) == null)
+        ChampionsServer.sql.setShardSpawn(num, player.getLocation());
+        if(ChampionsServer.sql.getShardHolder(num) == null)
             ShardHandler.spawnShard(num);
         player.sendMessage("Spawn location for shard #" + args[0] + " set to current location");
     }
@@ -85,7 +85,7 @@ public class CommandListener {
     @CommandHandler(name = "legends")
     public void legendsCommand(CommandSender sender, String[] args){
         for(ItemStack legend : LegendaryHandler.getLegends()){
-            OfflinePlayer holder = FFAMaster.sql.getLegendHolder(CustomItems.getName(legend));
+            OfflinePlayer holder = ChampionsServer.sql.getLegendHolder(CustomItems.getName(legend));
             if(sender.equals(holder))
                 sender.sendMessage(ChatColor.GREEN + "You hold " + TradeHandler.getName(legend));
             else if(holder == null)
@@ -101,8 +101,8 @@ public class CommandListener {
     public void legendSpawnCommand(Player player, String[] args){
         ItemStack legend = CustomItems.get(args[0]);
         String name = CustomItems.getName(legend);
-        FFAMaster.sql.setLegendSpawn(name, player.getLocation());
-        if(FFAMaster.sql.getLegendHolder(name) == null)
+        ChampionsServer.sql.setLegendSpawn(name, player.getLocation());
+        if(ChampionsServer.sql.getLegendHolder(name) == null)
             LegendaryHandler.spawnLegend(name);
         player.sendMessage("Spawn location for " + TradeHandler.getName(legend) + " set to current location");
     }

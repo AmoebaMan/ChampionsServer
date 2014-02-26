@@ -1,5 +1,5 @@
 
-package net.amoebaman.ffamaster.utils;
+package net.amoebaman.championsserver.utils;
 
 import java.lang.reflect.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package net.amoebaman.ffamaster.utils;
+package net.amoebaman.championsserver.utils;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.amoebaman.ffamaster.FFAMaster;
+import net.amoebaman.championsserver.ChampionsServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -267,9 +267,9 @@ public class Utils {
 		/*
 		 * Check the player's inventory
 		 */
-		inv = player.isOnline() ? player.getPlayer().getInventory() : FFAMaster.sql.getInventory(player);
+		inv = player.isOnline() ? player.getPlayer().getInventory() : ChampionsServer.sql.getInventory(player);
 		for(int i = 0; i < inv.getSize(); i++)
-			if(FFAMaster.sameItem(inv.getItem(i), stack)){
+			if(ChampionsServer.sameItem(inv.getItem(i), stack)){
 				if(found || wipeAll)
 					inv.setItem(i, null);
 				else
@@ -279,9 +279,9 @@ public class Utils {
 		/*
 		 * Check the player's ender chest
 		 */
-		inv = player.isOnline() ? player.getPlayer().getEnderChest() : FFAMaster.sql.loadChest(player);
+		inv = player.isOnline() ? player.getPlayer().getEnderChest() : ChampionsServer.sql.loadChest(player);
 		for(int i = 0; i < inv.getSize(); i++)
-			if(FFAMaster.sameItem(inv.getItem(i), stack)){
+			if(ChampionsServer.sameItem(inv.getItem(i), stack)){
 				if(found || wipeAll)
 					inv.setItem(i, null);
 				else
@@ -291,7 +291,7 @@ public class Utils {
 		/*
 		 * Check the item on the player's cursor
 		 */
-		if(player.isOnline() && FFAMaster.sameItem(player.getPlayer().getItemOnCursor(), stack)){
+		if(player.isOnline() && ChampionsServer.sameItem(player.getPlayer().getItemOnCursor(), stack)){
 			if(found || wipeAll)
 				player.getPlayer().setItemOnCursor(null);
 			else

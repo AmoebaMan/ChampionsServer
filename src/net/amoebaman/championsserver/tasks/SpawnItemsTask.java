@@ -1,10 +1,10 @@
-package net.amoebaman.ffamaster.tasks;
+package net.amoebaman.championsserver.tasks;
 
 import java.util.Map.Entry;
 
-import net.amoebaman.ffamaster.CustomItems;
-import net.amoebaman.ffamaster.FFAMaster;
-import net.amoebaman.ffamaster.utils.Utils;
+import net.amoebaman.championsserver.ChampionsServer;
+import net.amoebaman.championsserver.CustomItems;
+import net.amoebaman.championsserver.utils.Utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -44,7 +44,7 @@ public class SpawnItemsTask implements Runnable {
 					top: for(int x = -10; x <= 10; x++)
 						for(int y = -10; y <= 10; y++)
 							for(int z = -10; z <= 10; z++)
-								if(!FFAMaster.natural.contains(block.getRelative(x, y, z).getType())){
+								if(!ChampionsServer.natural.contains(block.getRelative(x, y, z).getType())){
 									found = true;
 									break top;
 								}
@@ -55,7 +55,7 @@ public class SpawnItemsTask implements Runnable {
 					
 					drop = null;
 					for(int k = 0; k < itemAttempts; k++){
-						entry = Utils.getRandomElement(FFAMaster.dropChances.entrySet());
+						entry = Utils.getRandomElement(ChampionsServer.dropChances.entrySet());
 						if(Math.random() > entry.getValue())
 							drop = null;
 						else
@@ -66,7 +66,7 @@ public class SpawnItemsTask implements Runnable {
 						enc = null;
 						int tries = 0;
 						do{
-							enc = Utils.getRandomElement(FFAMaster.enchants);
+							enc = Utils.getRandomElement(ChampionsServer.enchants);
 							tries++;
 						} while(!enc.canEnchantItem(drop) && tries < itemAttempts);
 						if(enc.canEnchantItem(drop))
@@ -76,8 +76,8 @@ public class SpawnItemsTask implements Runnable {
 					if(drop != null){
 						world.dropItem(loc, drop);
 						world.unloadChunkRequest(block.getX(), block.getZ(), true);
-						FFAMaster.logger().info("Dropped " + drop + " at (" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ")");
-						if(FFAMaster.getPtValue(drop) >= 10 || CustomItems.isCustomItem(drop))
+						ChampionsServer.logger().info("Dropped " + drop + " at (" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ")");
+						if(ChampionsServer.getPtValue(drop) >= 10 || CustomItems.isCustomItem(drop))
 							Bukkit.broadcastMessage(ChatColor.GREEN + "A rare or powerful item has dropped at (" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ")!");
 					}
 				}

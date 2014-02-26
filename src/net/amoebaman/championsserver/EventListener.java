@@ -1,11 +1,11 @@
-package net.amoebaman.ffamaster;
+package net.amoebaman.championsserver;
 
 import java.util.*;
 
-import net.amoebaman.ffamaster.tasks.SeekerTask;
-import net.amoebaman.ffamaster.tasks.SeekerTask.Mode;
-import net.amoebaman.ffamaster.utils.ParticleEffect;
-import net.amoebaman.ffamaster.utils.Utils;
+import net.amoebaman.championsserver.tasks.SeekerTask;
+import net.amoebaman.championsserver.tasks.SeekerTask.Mode;
+import net.amoebaman.championsserver.utils.ParticleEffect;
+import net.amoebaman.championsserver.utils.Utils;
 import net.amoebaman.kitmaster.controllers.ItemController;
 import net.amoebaman.kitmaster.utilities.ParseItemException;
 
@@ -60,7 +60,7 @@ public class EventListener implements Listener{
 		if(culprit instanceof Player && ((Player) culprit).getGameMode() == GameMode.ADVENTURE){
 			Event tester = new BlockBreakEvent(event.getEntity().getLocation().getBlock(), (Player) culprit);
 			Bukkit.getPluginManager().callEvent(tester);
-			FFAMaster.logger().info(((Player) culprit).getName() + (((Cancellable) tester).isCancelled() ? " was not " : " was ") + " allowed to break the block in Adventure");
+			ChampionsServer.logger().info(((Player) culprit).getName() + (((Cancellable) tester).isCancelled() ? " was not " : " was ") + " allowed to break the block in Adventure");
 		}
 	}
 	
@@ -84,7 +84,7 @@ public class EventListener implements Listener{
 		if(event.getEntity().getType() == EntityType.ENDER_PEARL){
 			EnderPearl pearl = (EnderPearl) event.getEntity();
 			if(pearl.getShooter() != null && pearl.getShooter().getType() == EntityType.PLAYER)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+				Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 					((Player) event.getEntity().getShooter()).setItemInHand(new ItemStack(Material.ENDER_PEARL));
 				}});
 		}
@@ -119,7 +119,7 @@ public class EventListener implements Listener{
 						multiplier -= 0.3 * (effect.getAmplifier() + 1);
 				}
 				arrow.setVelocity(arrow.getVelocity().multiply(multiplier));
-				arrow.setMetadata("velocity", new FixedMetadataValue(FFAMaster.plugin(), multiplier));
+				arrow.setMetadata("velocity", new FixedMetadataValue(ChampionsServer.plugin(), multiplier));
 			}
 		}
 	}
@@ -142,7 +142,7 @@ public class EventListener implements Listener{
 			final Player victim = (Player) event.getEntity();
 			for(final ItemStack armor : victim.getInventory().getArmorContents())
 				if(armor != null)
-					Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+					Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 						armor.setDurability((short) 0);
 						victim.updateInventory();
 					}});
@@ -164,7 +164,7 @@ public class EventListener implements Listener{
 			if(damager != null){
 				Material weapon = damager.getItemInHand().getType();
 				if(weapon.name().contains("SWORD") || weapon.name().contains("AXE"))
-					Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+					Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 						damager.getItemInHand().setDurability((short) 0);
 						damager.updateInventory();
 					}});
@@ -177,7 +177,7 @@ public class EventListener implements Listener{
 		if(event.getEntityType() == EntityType.ARROW){
 			final Arrow arrow = (Arrow) event.getEntity();
 			if(arrow.getShooter() != null && arrow.getShooter().getType() == EntityType.PLAYER)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+				Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 					((Player) arrow.getShooter()).getItemInHand().setDurability((short) 0);
 					((Player) arrow.getShooter()).updateInventory();
 				}});
@@ -193,9 +193,9 @@ public class EventListener implements Listener{
 		int looting = 0;
 		int vorpal = 0;
 		for(ItemStack stack : killer.getInventory().getContents()){
-			if(FFAMaster.sameItem(stack, CustomItems.get("looting_charm")))
+			if(ChampionsServer.sameItem(stack, CustomItems.get("looting_charm")))
 				looting += stack.getAmount();
-			if(FFAMaster.sameItem(stack, CustomItems.get("vorpal_charm")))
+			if(ChampionsServer.sameItem(stack, CustomItems.get("vorpal_charm")))
 				vorpal += stack.getAmount();
 		}
 		if(Math.random() * 10 < looting){
@@ -231,14 +231,14 @@ public class EventListener implements Listener{
 	public void pickingUpItems(PlayerPickupItemEvent event){
 		Player player = event.getPlayer();
 		Item item = event.getItem();
-		if(FFAMaster.getPtValue(item.getItemStack()) > 0 && FFAMaster.getPtValue(player.getInventory()) + FFAMaster.getPtValue(item.getItemStack()) > FFAMaster.getPtCap(player) && FFAMaster.isPvPZone(player.getLocation())){
+		if(ChampionsServer.getPtValue(item.getItemStack()) > 0 && ChampionsServer.getPtValue(player.getInventory()) + ChampionsServer.getPtValue(item.getItemStack()) > ChampionsServer.getPtCap(player) && ChampionsServer.isPvPZone(player.getLocation())){
 			player.sendMessage(ChatColor.RED + "This item would raise your PT value above the cap");
 			event.setCancelled(true);
 			item.setPickupDelay(100);
 			
 			if(player.getEnderChest().firstEmpty() >= 0){
 				player.getEnderChest().addItem(item.getItemStack());
-				FFAMaster.sql.saveChest(player, player.getEnderChest());
+				ChampionsServer.sql.saveChest(player, player.getEnderChest());
 				player.getWorld().playSound(item.getLocation(), Sound.ITEM_PICKUP, 1f, 1f);
 				player.sendMessage(ChatColor.GREEN + "The item has been stored in your Ender Chest");
 				item.remove();
@@ -250,7 +250,7 @@ public class EventListener implements Listener{
 	public void droppingItems(PlayerDropItemEvent event){
 		Player player = event.getPlayer();
 		Item item = event.getItemDrop();
-		if(FFAMaster.getPtValue(item.getItemStack()) > 0 && FFAMaster.getPtValue(player.getInventory()) - FFAMaster.getPtValue(item.getItemStack()) > FFAMaster.getPtCap(player) && FFAMaster.isPvPZone(player.getLocation())){
+		if(ChampionsServer.getPtValue(item.getItemStack()) > 0 && ChampionsServer.getPtValue(player.getInventory()) - ChampionsServer.getPtValue(item.getItemStack()) > ChampionsServer.getPtCap(player) && ChampionsServer.isPvPZone(player.getLocation())){
 			player.sendMessage(ChatColor.RED + "Dropping that item would raise your PT value above the cap");
 			event.setCancelled(true);
 		}
@@ -260,10 +260,10 @@ public class EventListener implements Listener{
 	public void killingExp(PlayerDeathEvent event){
 		Player victim = event.getEntity();
 		Player killer = victim.getKiller();
-		int xp = FFAMaster.getPtValue(victim.getInventory()) * 2;
+		int xp = ChampionsServer.getPtValue(victim.getInventory()) * 2;
 		xp += TradeHandler.getAmountInInventory(CustomItems.get("boss_charm"), victim.getInventory()) * 25;
 		xp += victim.getLevel() * 10;
-		double ratio = 1.0 * FFAMaster.getPtValue(victim.getInventory()) / (killer != null ? FFAMaster.getPtValue(killer.getInventory()) : 0);
+		double ratio = 1.0 * ChampionsServer.getPtValue(victim.getInventory()) / (killer != null ? ChampionsServer.getPtValue(killer.getInventory()) : 0);
 		xp *= ratio > 3 ? 3 : ratio;
 		event.setDroppedExp(xp);
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "xp -" + xp + " " + victim.getName());
@@ -276,14 +276,14 @@ public class EventListener implements Listener{
 	public void bossCharmsVanishOnDeath(PlayerDeathEvent event){
 		Inventory inv = event.getEntity().getInventory();
 		for(int i = 0; i < inv.getSize(); i++)
-			if(FFAMaster.sameItem(inv.getItem(i), CustomItems.get("boss_charm")))
+			if(ChampionsServer.sameItem(inv.getItem(i), CustomItems.get("boss_charm")))
 				inv.setItem(i, null);
 	}
 	
 	@EventHandler
 	public void savePlayerInventories(PlayerQuitEvent event){
-		FFAMaster.sql.saveInventory(event.getPlayer());
-		FFAMaster.logger().info("Saved " + event.getPlayer().getName() + "'s inventory to the database");
+		ChampionsServer.sql.saveInventory(event.getPlayer());
+		ChampionsServer.logger().info("Saved " + event.getPlayer().getName() + "'s inventory to the database");
 	}
 	
 	@EventHandler
@@ -314,7 +314,7 @@ public class EventListener implements Listener{
 		Player player = (Player) event.getPlayer();
 		Inventory inv = event.getInventory();
 		if(inv.getType() == InventoryType.ENDER_CHEST){
-			Inventory stored = FFAMaster.sql.loadChest(player);
+			Inventory stored = ChampionsServer.sql.loadChest(player);
 			for(int i = 0; i < stored.getSize() && i < inv.getSize(); i++)
 				inv.setItem(i, stored.getItem(i));
 		}
@@ -325,7 +325,7 @@ public class EventListener implements Listener{
 		Player player = (Player) event.getPlayer();
 		Inventory inv = event.getInventory();
 		if(inv.getType() == InventoryType.ENDER_CHEST)
-			FFAMaster.sql.saveChest(player, inv);
+			ChampionsServer.sql.saveChest(player, inv);
 	}
 	
 	@EventHandler
@@ -339,12 +339,12 @@ public class EventListener implements Listener{
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void enterAndExitSafeRegions(final PlayerMoveEvent event){
 		final Player player = event.getPlayer();
-		if(FFAMaster.isPvPZone(event.getTo()) && !FFAMaster.isPvPZone(event.getFrom()) && player.getGameMode() != GameMode.CREATIVE){
-			final int pt = FFAMaster.getPtValue(player.getInventory());
-			final int cap = FFAMaster.getPtCap(player);
+		if(ChampionsServer.isPvPZone(event.getTo()) && !ChampionsServer.isPvPZone(event.getFrom()) && player.getGameMode() != GameMode.CREATIVE){
+			final int pt = ChampionsServer.getPtValue(player.getInventory());
+			final int cap = ChampionsServer.getPtCap(player);
 			if(pt > cap){
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
-					if(FFAMaster.isPvPZone(player.getLocation())){
+				Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
+					if(ChampionsServer.isPvPZone(player.getLocation())){
 						player.teleport(event.getFrom());
 						player.sendMessage(ChatColor.RED + "You can't enter the PvP area because your inventory's value of " + pt + "PT exceeds the maximum of " + cap + "PT");
 					}
@@ -356,9 +356,9 @@ public class EventListener implements Listener{
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void enterAndExitSafeRegions(PlayerTeleportEvent event){
 		Player player = event.getPlayer();
-		if(FFAMaster.isPvPZone(event.getTo()) && player.getGameMode() != GameMode.CREATIVE){
-			int pt = FFAMaster.getPtValue(player.getInventory());
-			int cap = FFAMaster.getPtCap(player);
+		if(ChampionsServer.isPvPZone(event.getTo()) && player.getGameMode() != GameMode.CREATIVE){
+			int pt = ChampionsServer.getPtValue(player.getInventory());
+			int cap = ChampionsServer.getPtCap(player);
 			if(pt > cap){
 				event.setCancelled(true);
 				event.setTo(event.getFrom());
@@ -371,11 +371,11 @@ public class EventListener implements Listener{
 	public void firstTimePlayers(PlayerJoinEvent event){
 		final Player player = event.getPlayer();
 		if(!player.hasPlayedBefore()){
-			Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+			Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 				Bukkit.broadcastMessage(ChatColor.GOLD + "Everybody please give " + ChatColor.DARK_RED + player.getName() + ChatColor.GOLD + " a huge welcome to the server");
 				Bukkit.broadcastMessage(ChatColor.GOLD + "In total we've had " + ChatColor.DARK_RED + Bukkit.getOfflinePlayers().length + ChatColor.GOLD + " unique players visit this server");
 			}});
-			Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+			Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 				player.sendMessage(ChatColor.GREEN + "To help you out as a new player, we've given you some basic gear to start off with");
 				player.sendMessage(ChatColor.GREEN + "Go wander around spawn city to learn more about the server");
 				player.sendMessage(ChatColor.GREEN + "All the answers you need are here");
@@ -396,7 +396,7 @@ public class EventListener implements Listener{
 	
 	@EventHandler
 	public void givePlayersInventoriesOnJoin(PlayerJoinEvent event){
-		FFAMaster.sql.loadInventory(event.getPlayer());
+		ChampionsServer.sql.loadInventory(event.getPlayer());
 	}
 	
 	@EventHandler
@@ -416,14 +416,14 @@ public class EventListener implements Listener{
 	@EventHandler
 	public void onlyLegalEnchants(EnchantItemEvent event){
 		for(Enchantment enc : event.getEnchantsToAdd().keySet())
-			if(!FFAMaster.enchants.contains(enc))
+			if(!ChampionsServer.enchants.contains(enc))
 				event.setCancelled(true);
 	}
 	
 	@EventHandler
 	public void tagSpawnerMobs(CreatureSpawnEvent event){
 		if(event.getSpawnReason() == SpawnReason.SPAWNER || event.getSpawnReason() == SpawnReason.SLIME_SPLIT)
-			event.getEntity().setMetadata("lessXP", new FixedMetadataValue(FFAMaster.plugin(), true));
+			event.getEntity().setMetadata("lessXP", new FixedMetadataValue(ChampionsServer.plugin(), true));
 	}
 	
 	@EventHandler
@@ -455,10 +455,10 @@ public class EventListener implements Listener{
 	@EventHandler
 	public void skokkragAbility(PlayerInteractEvent event){
 		final Player player = event.getPlayer();
-		if(event.getAction() == Action.RIGHT_CLICK_AIR && FFAMaster.sameItem(event.getItem(), CustomItems.get("skokkrag")) && player.getLevel() > 0){
-			final Location target = player.getTargetBlock(FFAMaster.transparent, 150).getLocation();
+		if(event.getAction() == Action.RIGHT_CLICK_AIR && ChampionsServer.sameItem(event.getItem(), CustomItems.get("skokkrag")) && player.getLevel() > 0){
+			final Location target = player.getTargetBlock(ChampionsServer.transparent, 150).getLocation();
 			for(int i = 0; i < 5; i++)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+				Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 					Location spread = target.clone().add((Math.random() - 0.5) * 10, 0, (Math.random() - 0.5) * 10);
 					spread.setY(spread.getWorld().getHighestBlockYAt(spread));
 					player.getWorld().strikeLightning(spread);
@@ -473,9 +473,9 @@ public class EventListener implements Listener{
 	@EventHandler
 	public void skietvlamAbility(PlayerInteractEvent event){
 		final Player player = event.getPlayer();
-		if(event.getAction() == Action.RIGHT_CLICK_AIR && FFAMaster.sameItem(event.getItem(), CustomItems.get("skietvlam")) && player.getLevel() > 0){
+		if(event.getAction() == Action.RIGHT_CLICK_AIR && ChampionsServer.sameItem(event.getItem(), CustomItems.get("skietvlam")) && player.getLevel() > 0){
 			for(int i = 0; i < 10; i++)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+				Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 					player.launchProjectile(SmallFireball.class);
 					player.getWorld().playEffect(player.getLocation(), Effect.MOBSPAWNER_FLAMES, 0);
 					player.getWorld().playEffect(player.getLocation(), Effect.BLAZE_SHOOT, 0);
@@ -487,12 +487,12 @@ public class EventListener implements Listener{
 	@EventHandler
 	public void lugvlaagAbility(PlayerInteractEvent event){
 		final Player player = event.getPlayer();
-		if(event.getAction() == Action.RIGHT_CLICK_AIR && FFAMaster.sameItem(event.getItem(), CustomItems.get("lugvlaag")) && player.getLevel() > 0){
-			final List<Block> los = player.getLineOfSight(FFAMaster.transparent, 150);
+		if(event.getAction() == Action.RIGHT_CLICK_AIR && ChampionsServer.sameItem(event.getItem(), CustomItems.get("lugvlaag")) && player.getLevel() > 0){
+			final List<Block> los = player.getLineOfSight(ChampionsServer.transparent, 150);
 			final List<Entity> shoved = new ArrayList<Entity>();
 			for(int i = 0; i < los.size(); i++){
 				final Location loc = los.get(i).getLocation();
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){;
+				Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){;
 				for(Entity e : loc.getChunk().getEntities())
 					if(e.getLocation().distance(loc) < 5 && !shoved.contains(e) && !e.equals(player)){
 						if(e instanceof LivingEntity)
@@ -555,7 +555,7 @@ public class EventListener implements Listener{
 	
 	@EventHandler
 	public void binocularsAbility(PlayerInteractEvent event){
-		if(event.getAction() == Action.RIGHT_CLICK_AIR && FFAMaster.sameItem(event.getItem(), CustomItems.get("binoculars"))){
+		if(event.getAction() == Action.RIGHT_CLICK_AIR && ChampionsServer.sameItem(event.getItem(), CustomItems.get("binoculars"))){
 			Player player = event.getPlayer();
 			
 			Map<EntityType, Integer> count = new HashMap<EntityType, Integer>();
@@ -563,7 +563,7 @@ public class EventListener implements Listener{
 				count.put(type, 0);
 			List<LivingEntity> spotted = new ArrayList<LivingEntity>();
 			
-			for(Block block : player.getLineOfSight(FFAMaster.transparent, 50 + (TradeHandler.getAmountInInventory(CustomItems.get("clairvoyance_charm"), player.getInventory()) * 10)))
+			for(Block block : player.getLineOfSight(ChampionsServer.transparent, 50 + (TradeHandler.getAmountInInventory(CustomItems.get("clairvoyance_charm"), player.getInventory()) * 10)))
 				for(Entity e : block.getChunk().getEntities())
 					if(e instanceof LivingEntity && e.getLocation().distance(block.getLocation()) < 10 && !spotted.contains(e) && !e.equals(player)){
 						spotted.add((LivingEntity) e);
@@ -586,13 +586,13 @@ public class EventListener implements Listener{
 				if(e instanceof Player){
 					
 					Player target = (Player) e;
-					player.sendMessage(pre + target.getName() + " is carrying " + FFAMaster.getPtValue(target.getInventory()) + "PT worth of gear");
+					player.sendMessage(pre + target.getName() + " is carrying " + ChampionsServer.getPtValue(target.getInventory()) + "PT worth of gear");
 					
 					List<String> lines = new ArrayList<String>();
 					int clouding = 0;
 					for(ItemStack stack : target.getInventory().getContents())
-						if(stack != null && FFAMaster.isInteresting(stack)){
-							if(FFAMaster.sameItem(stack, CustomItems.get("clouding_charm")))
+						if(stack != null && ChampionsServer.isInteresting(stack)){
+							if(ChampionsServer.sameItem(stack, CustomItems.get("clouding_charm")))
 								clouding += stack.getAmount();
 							if(stack != null)
 								lines.add(pre + " - " + Utils.friendlyItemString(stack));
@@ -625,9 +625,9 @@ public class EventListener implements Listener{
 					
 					Inventory inv = Utils.entityGearToInv(e.getEquipment());
 					if(inv.firstEmpty() != 0){
-						player.sendMessage(pre + "A " + e.getType().name().toLowerCase().replace('_', ' ') + " is carring " + FFAMaster.getPtValue(inv) + "PT worth of gear");
+						player.sendMessage(pre + "A " + e.getType().name().toLowerCase().replace('_', ' ') + " is carring " + ChampionsServer.getPtValue(inv) + "PT worth of gear");
 						for(ItemStack stack : inv.getContents())
-							if(stack != null && FFAMaster.isInteresting(stack))
+							if(stack != null && ChampionsServer.isInteresting(stack))
 								player.sendMessage(pre + " - " + Utils.friendlyItemString(stack));
 						alt = !alt;
 					}
@@ -639,7 +639,7 @@ public class EventListener implements Listener{
 	
 	@EventHandler
 	public void seekerAbility(PlayerInteractEvent event){
-		if(event.getAction() == Action.RIGHT_CLICK_AIR && FFAMaster.sameItem(event.getItem(), CustomItems.get("seeker"))){
+		if(event.getAction() == Action.RIGHT_CLICK_AIR && ChampionsServer.sameItem(event.getItem(), CustomItems.get("seeker"))){
 			Player player = event.getPlayer();
 			SeekerTask.MODES.put(player, Mode.values()[(SeekerTask.MODES.get(player).ordinal() + 1) % Mode.values().length]);
 			switch(SeekerTask.MODES.get(player)){

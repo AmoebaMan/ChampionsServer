@@ -1,9 +1,9 @@
-package net.amoebaman.ffamaster;
+package net.amoebaman.championsserver;
 
 import java.util.*;
 
-import net.amoebaman.ffamaster.objects.Trade;
-import net.amoebaman.ffamaster.prompts.WelcomePrompt;
+import net.amoebaman.championsserver.objects.Trade;
+import net.amoebaman.championsserver.prompts.WelcomePrompt;
 import net.milkbowl.vault.item.ItemInfo;
 import net.milkbowl.vault.item.Items;
 
@@ -19,7 +19,7 @@ public class TradeHandler implements Listener, ConversationAbandonedListener{
 	
 	public static final String TRADER_NAME = "Dave";
 	public static final String PREFIX = "<" + ChatColor.LIGHT_PURPLE + "Merchant" + ChatColor.RESET + "> " + ChatColor.GRAY + TRADER_NAME + ": " + ChatColor.RESET;
-	private ConversationFactory factory = new ConversationFactory(FFAMaster.plugin())
+	private ConversationFactory factory = new ConversationFactory(ChampionsServer.plugin())
 	.addConversationAbandonedListener(this)
 	.thatExcludesNonPlayersWithMessage("Must be a player")
 	.withEscapeSequence("SHUT UP")
@@ -77,15 +77,15 @@ public class TradeHandler implements Listener, ConversationAbandonedListener{
 	public static int getAmountInInventory(ItemStack item, Inventory inv){
 		int count = 0;
 		for(ItemStack stack : inv.getContents())
-			if(FFAMaster.sameItem(stack, item))
+			if(ChampionsServer.sameItem(stack, item))
 				count += stack.getAmount();
 		return count;
 	}
 	
 	public static int getBuyPrice(ItemStack item){
-		for(ItemStack each : FFAMaster.buyPrices.keySet())
-			if(FFAMaster.sameItem(item, each))
-				return FFAMaster.buyPrices.get(each);
+		for(ItemStack each : ChampionsServer.buyPrices.keySet())
+			if(ChampionsServer.sameItem(item, each))
+				return ChampionsServer.buyPrices.get(each);
 		return -1;
 	}
 	

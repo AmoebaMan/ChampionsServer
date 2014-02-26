@@ -1,4 +1,4 @@
-package net.amoebaman.ffamaster.objects;
+package net.amoebaman.championsserver.objects;
 
 import org.bukkit.inventory.ItemStack;
 

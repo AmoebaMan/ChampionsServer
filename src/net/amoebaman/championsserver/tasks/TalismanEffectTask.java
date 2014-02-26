@@ -1,11 +1,11 @@
-package net.amoebaman.ffamaster.tasks;
+package net.amoebaman.championsserver.tasks;
 
 import java.util.*;
 import java.util.Map.Entry;
 
-import net.amoebaman.ffamaster.CustomItems;
-import net.amoebaman.ffamaster.FFAMaster;
-import net.amoebaman.ffamaster.ShardHandler;
+import net.amoebaman.championsserver.ChampionsServer;
+import net.amoebaman.championsserver.CustomItems;
+import net.amoebaman.championsserver.ShardHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -26,7 +26,7 @@ public class TalismanEffectTask implements Runnable, Listener {
 		
 		for(Player player : Bukkit.getOnlinePlayers()){
 			
-			MAP = FFAMaster.getTalismanEffects(player.getInventory());
+			MAP = ChampionsServer.getTalismanEffects(player.getInventory());
 			
 			if(player.getInventory().contains(CustomItems.get("wellspring_charm")))
 				for(Entry<PotionEffectType, Integer> entry : ShardHandler.getCharmBonuses().entrySet()){
@@ -57,7 +57,7 @@ public class TalismanEffectTask implements Runnable, Listener {
 					MAP.put(type, maxLevel);
 			}
 			
-			if(FFAMaster.sameItem(player.getItemInHand(), CustomItems.get("binoculars")))
+			if(ChampionsServer.sameItem(player.getItemInHand(), CustomItems.get("binoculars")))
 				MAP.put(PotionEffectType.SLOW, 99);
 			
 			if(!getEffects(player).equals(MAP)){

@@ -1,8 +1,8 @@
-package net.amoebaman.ffamaster.prompts;
+package net.amoebaman.championsserver.prompts;
 
-import net.amoebaman.ffamaster.TradeHandler;
-import net.amoebaman.ffamaster.objects.Trade;
-import net.amoebaman.ffamaster.objects.Trade.TradeType;
+import net.amoebaman.championsserver.TradeHandler;
+import net.amoebaman.championsserver.objects.Trade;
+import net.amoebaman.championsserver.objects.Trade.TradeType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;

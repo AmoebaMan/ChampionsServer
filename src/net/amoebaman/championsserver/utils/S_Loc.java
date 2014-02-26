@@ -1,4 +1,4 @@
-package net.amoebaman.ffamaster.utils;
+package net.amoebaman.championsserver.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -1,4 +1,4 @@
-package net.amoebaman.ffamaster.utils;
+package net.amoebaman.championsserver.utils;
 
 import java.util.HashMap;
 import java.util.List;

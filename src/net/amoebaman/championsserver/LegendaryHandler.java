@@ -1,9 +1,9 @@
-package net.amoebaman.ffamaster;
+package net.amoebaman.championsserver;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.amoebaman.ffamaster.utils.Utils;
+import net.amoebaman.championsserver.utils.Utils;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -31,31 +31,31 @@ public class LegendaryHandler implements Listener, Runnable{
 		
 		ItemStack stack = CustomItems.get(name);
 		String storageName = CustomItems.getName(stack);
-		Location spawn = FFAMaster.sql.getLegendSpawn(storageName).getBlock().getLocation().add(0.5, 0.5, 0.5);
+		Location spawn = ChampionsServer.sql.getLegendSpawn(storageName).getBlock().getLocation().add(0.5, 0.5, 0.5);
 		
 		//Remove the old item if necessary
-		if(FFAMaster.legendItems.get(storageName) != null)
-			FFAMaster.legendItems.get(storageName).remove();
+		if(ChampionsServer.legendItems.get(storageName) != null)
+			ChampionsServer.legendItems.get(storageName).remove();
 		
 		Item item = spawn.getWorld().dropItem(spawn, stack);
 		item.setVelocity(new org.bukkit.util.Vector(0,0,0));
 		item.getWorld().playEffect(spawn, Effect.MOBSPAWNER_FLAMES, 0);
 		
-		FFAMaster.legendItems.put(storageName, item);
-		FFAMaster.sql.setLegendHolder(storageName, null);
+		ChampionsServer.legendItems.put(storageName, item);
+		ChampionsServer.sql.setLegendHolder(storageName, null);
 	}
 	
 	public static boolean isLegend(String name){
-		return CustomItems.isCustomItem(name) && FFAMaster.sql.getLegendSpawn(CustomItems.getName(CustomItems.get(name))) != null;
+		return CustomItems.isCustomItem(name) && ChampionsServer.sql.getLegendSpawn(CustomItems.getName(CustomItems.get(name))) != null;
 	}
 	
 	public static boolean isLegend(ItemStack stack){
-		return CustomItems.isCustomItem(stack) && FFAMaster.sql.getLegendSpawn(CustomItems.getName(stack)) != null;
+		return CustomItems.isCustomItem(stack) && ChampionsServer.sql.getLegendSpawn(CustomItems.getName(stack)) != null;
 	}
 	
 	public static List<ItemStack> getLegends(){
 		List<ItemStack> stacks = new ArrayList<ItemStack>();
-		for(String name : FFAMaster.sql.getLegends())
+		for(String name : ChampionsServer.sql.getLegends())
 			if(CustomItems.isCustomItem(name))
 				stacks.add(CustomItems.get(name));
 		return stacks;
@@ -65,8 +65,8 @@ public class LegendaryHandler implements Listener, Runnable{
 	public void droppingLegends(PlayerDropItemEvent event){
 		Item item = event.getItemDrop();
 		if(isLegend(item.getItemStack())){
-			FFAMaster.sql.setLegendHolder(CustomItems.getName(item.getItemStack()), null);
-			FFAMaster.legendItems.put(CustomItems.getName(item.getItemStack()), item);
+			ChampionsServer.sql.setLegendHolder(CustomItems.getName(item.getItemStack()), null);
+			ChampionsServer.legendItems.put(CustomItems.getName(item.getItemStack()), item);
 		}
 	}
 	
@@ -79,7 +79,7 @@ public class LegendaryHandler implements Listener, Runnable{
 	@EventHandler
 	public void recordLegendPickups(PlayerPickupItemEvent event){
 		if(isLegend(event.getItem().getItemStack()))
-			FFAMaster.sql.setLegendHolder(CustomItems.getName(event.getItem().getItemStack()), event.getPlayer());
+			ChampionsServer.sql.setLegendHolder(CustomItems.getName(event.getItem().getItemStack()), event.getPlayer());
 	}
 	
 	@EventHandler
@@ -106,8 +106,8 @@ public class LegendaryHandler implements Listener, Runnable{
 			ItemStack stack = inv.getItem(i);
 			if(stack != null && isLegend(stack)){
 				inv.setItem(i, null);
-				FFAMaster.sql.setLegendHolder(CustomItems.getName(stack), null);
-				FFAMaster.legendItems.put(CustomItems.getName(stack), event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), stack));
+				ChampionsServer.sql.setLegendHolder(CustomItems.getName(stack), null);
+				ChampionsServer.legendItems.put(CustomItems.getName(stack), event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), stack));
 			}
 		}
 	}
@@ -120,7 +120,7 @@ public class LegendaryHandler implements Listener, Runnable{
 		for(Entity e : event.getChunk().getEntities())
 			if(e instanceof Item){
 				ItemStack stack = ((Item) e).getItemStack();
-				if(isLegend(stack) && !FFAMaster.legendItems.containsValue((Item) e))
+				if(isLegend(stack) && !ChampionsServer.legendItems.containsValue((Item) e))
 					e.remove();
 			}
 	}
@@ -132,10 +132,10 @@ public class LegendaryHandler implements Listener, Runnable{
 		for(ItemStack legend : getLegends()){
 			
 			String name = CustomItems.getName(legend);
-			OfflinePlayer holder = FFAMaster.sql.getLegendHolder(name);
+			OfflinePlayer holder = ChampionsServer.sql.getLegendHolder(name);
 			
 			if(holder == null){
-				if(Utils.shouldRespawnItem(FFAMaster.legendItems.get(name)))
+				if(Utils.shouldRespawnItem(ChampionsServer.legendItems.get(name)))
 					spawnLegend(name);
 			}
 			

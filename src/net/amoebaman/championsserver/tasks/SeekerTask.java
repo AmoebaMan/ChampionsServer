@@ -1,12 +1,12 @@
-package net.amoebaman.ffamaster.tasks;
+package net.amoebaman.championsserver.tasks;
 
 import java.util.*;
 
-import net.amoebaman.ffamaster.CustomItems;
-import net.amoebaman.ffamaster.FFAMaster;
-import net.amoebaman.ffamaster.LegendaryHandler;
-import net.amoebaman.ffamaster.ShardHandler;
-import net.amoebaman.ffamaster.TradeHandler;
+import net.amoebaman.championsserver.ChampionsServer;
+import net.amoebaman.championsserver.CustomItems;
+import net.amoebaman.championsserver.LegendaryHandler;
+import net.amoebaman.championsserver.ShardHandler;
+import net.amoebaman.championsserver.TradeHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,7 +37,7 @@ public class SeekerTask implements Runnable{
 								conditions = TradeHandler.getAmountInInventory(CustomItems.get("boss_charm"), each.getInventory()) > 0;
 								break;
 							case EQUAL:
-								conditions = Math.abs(FFAMaster.getPtValue(player.getInventory()) - FFAMaster.getPtValue(each.getInventory())) <= 5;
+								conditions = Math.abs(ChampionsServer.getPtValue(player.getInventory()) - ChampionsServer.getPtValue(each.getInventory())) <= 5;
 								break;
 							case LEGENDS:
 								for(ItemStack item : each.getInventory().getContents())
@@ -50,7 +50,7 @@ public class SeekerTask implements Runnable{
 										conditions = true;
 								break;
 							case STRONGER:
-								conditions = FFAMaster.getPtValue(each.getInventory()) - FFAMaster.getPtValue(player.getInventory()) > 5;
+								conditions = ChampionsServer.getPtValue(each.getInventory()) - ChampionsServer.getPtValue(player.getInventory()) > 5;
 								break;
 						}
 						if(conditions)

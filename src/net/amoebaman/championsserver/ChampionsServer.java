@@ -1,12 +1,12 @@
-package net.amoebaman.ffamaster;
+package net.amoebaman.championsserver;
 
 import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import net.amoebaman.ffamaster.tasks.*;
-import net.amoebaman.ffamaster.utils.*;
+import net.amoebaman.championsserver.tasks.*;
+import net.amoebaman.championsserver.utils.*;
 
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,7 +22,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 @SuppressWarnings("deprecation")
-public class FFAMaster extends JavaPlugin{
+public class ChampionsServer extends JavaPlugin{
 	
 	public static String mainDir;
 	public static YamlConfiguration config, values;
@@ -139,16 +139,16 @@ public class FFAMaster extends JavaPlugin{
 	
 	public void onDisable(){
 		logger().info("Despawning " + shardItems.size() + " dropped shards");
-		for(Item i : FFAMaster.shardItems)
+		for(Item i : ChampionsServer.shardItems)
 			if(i != null)
 				i.remove();
 		logger().info("Despawning " + legendItems.size() + " dropped legends");
-		for(Item i : FFAMaster.legendItems.values())
+		for(Item i : ChampionsServer.legendItems.values())
 			if(i != null)
 				i.remove();
 		logger().info("Saving player inventories to SQL database");
 		for(Player player : Bukkit.getOnlinePlayers())
-			FFAMaster.sql.saveInventory(player);
+			ChampionsServer.sql.saveInventory(player);
 		logger().info("Cancelling repeating tasks");
 		for(int id : tasks)
 			Bukkit.getScheduler().cancelTask(id);
@@ -159,7 +159,7 @@ public class FFAMaster extends JavaPlugin{
 	 * Statically gets a reference to this plugin from Bukkit's plugin manager
 	 * @return this
 	 */
-	public static FFAMaster plugin(){ return (FFAMaster) Bukkit.getPluginManager().getPlugin("FFAMaster"); }
+	public static ChampionsServer plugin(){ return (ChampionsServer) Bukkit.getPluginManager().getPlugin("FFAMaster"); }
 	
 	/**
 	 * Statically gets a reference to this plugin's console logger from Bukkit's plugin manager
@@ -180,7 +180,7 @@ public class FFAMaster extends JavaPlugin{
 				plugin().getLogger().info("Loading pre-defined contents of " + name + ".yml");
 				file.createNewFile();
 				file.setWritable(true);
-				InputStream preset = FFAMaster.class.getResourceAsStream("/" + name + ".yml");
+				InputStream preset = ChampionsServer.class.getResourceAsStream("/" + name + ".yml");
 				if(preset != null){
 					BufferedReader reader = new BufferedReader(new InputStreamReader(preset));
 					BufferedWriter writer = new BufferedWriter(new FileWriter(file));

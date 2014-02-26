@@ -1,12 +1,11 @@
-package net.amoebaman.ffamaster;
+package net.amoebaman.championsserver;
 
 import java.sql.*;
 import java.util.*;
 
-import net.amoebaman.ffamaster.utils.Utils;
+import net.amoebaman.championsserver.utils.Utils;
 
 import org.bukkit.*;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.*;

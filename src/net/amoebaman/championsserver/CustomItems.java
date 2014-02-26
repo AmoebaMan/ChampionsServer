@@ -1,4 +1,4 @@
-package net.amoebaman.ffamaster;
+package net.amoebaman.championsserver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class CustomItems {
 				customItems.put(key.toLowerCase().replace(' ', '_'), stack);
 			}
 			catch(Exception e){
-				FFAMaster.logger().severe("Unable to load custom item: " + key);
+				ChampionsServer.logger().severe("Unable to load custom item: " + key);
 				e.printStackTrace();
 			}
 		}
@@ -51,7 +51,7 @@ public class CustomItems {
 	 */
 	public static String getName(ItemStack item){
 		for(String name : customItems.keySet())
-			if(FFAMaster.sameItem(item, customItems.get(name)))
+			if(ChampionsServer.sameItem(item, customItems.get(name)))
 				return name;
 		return null;
 	}

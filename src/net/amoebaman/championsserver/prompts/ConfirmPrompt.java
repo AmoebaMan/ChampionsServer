@@ -1,9 +1,9 @@
-package net.amoebaman.ffamaster.prompts;
+package net.amoebaman.championsserver.prompts;
 
-import net.amoebaman.ffamaster.FFAMaster;
-import net.amoebaman.ffamaster.TradeHandler;
-import net.amoebaman.ffamaster.objects.Trade;
-import net.amoebaman.ffamaster.objects.Trade.TradeType;
+import net.amoebaman.championsserver.ChampionsServer;
+import net.amoebaman.championsserver.TradeHandler;
+import net.amoebaman.championsserver.objects.Trade;
+import net.amoebaman.championsserver.objects.Trade.TradeType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
@@ -67,7 +67,7 @@ public class ConfirmPrompt extends FixedSetPrompt{
 			else{
 				for(int i = 0; i < player.getInventory().getSize(); i++){
 					ItemStack stack = player.getInventory().getItem(i);
-					if(FFAMaster.sameItem(stack, trade.item)){
+					if(ChampionsServer.sameItem(stack, trade.item)){
 						if(stack.getAmount() <= trade.amount){
 							trade.amount -= stack.getAmount();
 							player.getInventory().setItem(i, null);
