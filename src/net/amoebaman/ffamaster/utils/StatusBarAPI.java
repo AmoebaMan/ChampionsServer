@@ -7,32 +7,108 @@ import java.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 
-public class BarAPI {
+/**
+ * 
+ * @author AmoebaMan
+ * 
+ * Assorted methods for manipulating packets to spawn fake Ender Dragons and show players a
+ * status bar at the top of the screen using their health bar.  This class uses reflection, so
+ * even though it accesses NSM methods it should be version-safe (assuming the names of classes
+ * don't change).
+ * 
+ * This is a clean-up/fix-up/refactoring of SoThatsIt's code, which originally did nearly the
+ * same thing, but was less readable, had less features, and was broken in some places.
+ *
+ */
+public class StatusBarAPI {
 
-    private static Map<String, FakeDragon> dragonMap = new HashMap<String, FakeDragon>();
+    private static Map<String, FakeDragon> DRAGONS = new HashMap<String, FakeDragon>();
 
-    public static void setBar(Player player, String text, int percent, boolean reset) {
+    /**
+     * Checks to see if the player is currently being displayed a status bar via fake Ender Dragon.
+     * <br><br>
+     * This may sometimes return a false positive.  Specifically, if a player is sent a fake dragon, and
+     * subsequently logs off and back on and the bar is not restored, the record of the dragon will remain
+     * here even though the client no longer has the entity.  To avoid this, be sure to remove the bar
+     * manually using {@link #removeStatusBar(Player)} when the player leaves the server
+     * ({@link org.bukkit.event.player.PlayerQuitEvent} and {@link org.bukkit.event.player.PlayerKickEvent})
+     * 
+     * @param player a player
+     * @return true if this API has a record of the player being sent a bar
+     */
+    public static boolean hasStatusBar(Player player){
+        return DRAGONS.containsKey(player.getName()) && DRAGONS.get(player.getName()) != null;
+    }
+
+    /**
+     * Removes a player's status bar by destroying their fake dragon (if they have one).
+     * 
+     * @param player a player
+     */
+    public static void removeStatusBar(Player player){
+        if(hasStatusBar(player)){
+            sendPacket(player, DRAGONS.get(player.getName()).getDestroyPacket());
+            DRAGONS.remove(player.getName());
+        }
+    }
+
+    /**
+     * Sets a player's status bar to display a specific message and fill amount.  The fill amount is in
+     * decimal percent (i.e. 1 = 100%, 0 = 0%, 0.5 = 50%, 0.775 = 77.5%, etc.).
+     * <br><br>
+     * <code>text</code> is limited to 64 characters, and <code>percent</code> must be greater than zero
+     * and less than or equal to one.  If either argument is outside its constraints, it will be quietly
+     * trimmed to match.
+     * 
+     * @param player a player
+     * @param text some text with 64 characters or less
+     * @param percent a decimal percent in the range (0,1]
+     */
+    public static void setStatusBar(Player player, String text, float percent) {
 
         String playerName = player.getName();
-        FakeDragon dragon = dragonMap.containsKey(playerName) ? dragonMap
-                .get(playerName) : null;
+        FakeDragon dragon = DRAGONS.containsKey(playerName) ? DRAGONS.get(playerName) : null;
+        
+        if(text.length() > 64)
+            text = text.substring(0, 63);
+        if(percent > 1.0f)
+            percent = 1.0f;
+        if(percent < 0.05f)
+            percent = 0.05f;
 
-                if (reset || text.isEmpty()) {
-                    sendPacket(player, dragon.getDestroyPacket());
-                    dragonMap.remove(playerName);
-                }
+        if (text.isEmpty() && dragon != null)
+            removeStatusBar(player);
 
-                if (reset) {
-                    dragon = new FakeDragon(player.getLocation().add(0, -200, 0), text, percent);
-                    sendPacket(player, dragon.getSpawnPacket());
-                    dragonMap.put(playerName, dragon);
-                }
-                else {
-                    dragon.setName(text);
-                    dragon.setHealth(percent);
-                    sendPacket(player, dragon.getMetaPacket(dragon.getWatcher()));
-                    sendPacket(player, dragon.getTeleportPacket(player.getLocation().add(0, -200, 0)));
-                }
+        if (dragon == null) {
+            dragon = new FakeDragon(player.getLocation().add(0, -200, 0), text, percent);
+            sendPacket(player, dragon.getSpawnPacket());
+            DRAGONS.put(playerName, dragon);
+        }
+        else {
+            dragon.setName(text);
+            dragon.setHealth(percent);
+            sendPacket(player, dragon.getMetaPacket(dragon.getWatcher()));
+            sendPacket(player, dragon.getTeleportPacket(player.getLocation().add(0, -200, 0)));
+        }
+
+    }
+    
+    /**
+     * Removes the status bar for all players on the server.  See {@link #removeStatusBar(Player)}.
+     */
+    public static void removeAllStatusBars(){
+        for(Player each : Bukkit.getOnlinePlayers())
+            removeStatusBar(each);
+    }
+    
+    /**
+     * Sets the status bar for all players on the server.  See {@link #setStatusBar(Player, String, float)}.
+     * @param text some text with 64 characters or less
+     * @param percent a decimal percent in the range (0,1]
+     */
+    public static void setAllStatusBars(String text, float percent){
+        for(Player each : Bukkit.getOnlinePlayers())
+            setStatusBar(each, text, percent);
     }
 
     private static void sendPacket(Player player, Object packet) {
@@ -67,17 +143,17 @@ public class BarAPI {
 
         private Object           dragon;
 
-        public FakeDragon(Location loc, String name, int percent) {
+        public FakeDragon(Location loc, String name, float percent) {
             this.name = name;
             this.x = loc.getBlockX();
             this.y = loc.getBlockY();
             this.z = loc.getBlockZ();
-            this.health = percent / 100F * MAX_HEALTH;
+            this.health = percent * MAX_HEALTH;
             this.world = ReflectionUtils.getHandle(loc.getWorld());
         }
 
-        public void setHealth(int percent) {
-            this.health = percent / 100F * MAX_HEALTH;
+        public void setHealth(float percent) {
+            this.health = percent / MAX_HEALTH;
         }
 
         public void setName(String name) {
@@ -115,7 +191,7 @@ public class BarAPI {
         public Object getDestroyPacket(){
             try{
                 Class<?> packetClass = ReflectionUtils.getCraftClass("PacketPlayOutEntityDestroy");
-                return packetClass.getConstructors()[0].newInstance(id);
+                return packetClass.getConstructor(new Class<?>[]{int[].class}).newInstance(new int[]{id});
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -171,26 +247,7 @@ public class BarAPI {
 
     }
 
-    public static class ReflectionUtils {
-
-        public static void sendPacket(List<Player> players, Object packet) {
-            for (Player p : players) {
-                sendPacket(p, packet);
-            }
-        }
-
-        public static void sendPacket(Player p, Object packet) {
-            try {
-                Object nmsPlayer = getHandle(p);
-                Field con_field = nmsPlayer.getClass().getField("playerConnection");
-                Object con = con_field.get(nmsPlayer);
-                Method packet_method = getMethod(con.getClass(), "sendPacket");
-                packet_method.invoke(con, packet);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    private static class ReflectionUtils {
 
         public static Class<?> getCraftClass(String ClassName) {
             String name = Bukkit.getServer().getClass().getPackage().getName();
@@ -205,97 +262,61 @@ public class BarAPI {
         }
 
         public static Object getHandle(Entity entity) {
-            Object nms_entity = null;
-            Method entity_getHandle = getMethod(entity.getClass(), "getHandle");
             try {
-                nms_entity = entity_getHandle.invoke(entity);
+                return getMethod(entity.getClass(), "getHandle").invoke(entity);
             }
-            catch (IllegalArgumentException e) {
-                e.printStackTrace();
+            catch (Exception e){
+                e.printStackTrace(); 
+                return null;
             }
-            catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            return nms_entity;
         }
 
         public static Object getHandle(World world) {
-            Object nms_entity = null;
-            Method entity_getHandle = getMethod(world.getClass(), "getHandle");
             try {
-                nms_entity = entity_getHandle.invoke(world);
+                return getMethod(world.getClass(), "getHandle").invoke(world);
             }
-            catch (IllegalArgumentException e) {
-                e.printStackTrace();
+            catch (Exception e){
+                e.printStackTrace(); 
+                return null;
             }
-            catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            return nms_entity;
         }
 
         public static Field getField(Class<?> cl, String field_name) {
             try {
-                Field field = cl.getDeclaredField(field_name);
-                return field;
+                return cl.getDeclaredField(field_name);
             }
-            catch (SecurityException e) {
+            catch (Exception e) {
                 e.printStackTrace();
+                return null;
             }
-            catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-            return null;
         }
 
         public static Method getMethod(Class<?> cl, String method, Class<?>... args) {
-            for (Method m : cl.getMethods()) {
-                if (m.getName().equals(method)
-                        && ClassListEqual(args, m.getParameterTypes())) {
+            for (Method m : cl.getMethods()) 
+                if (m.getName().equals(method) && ClassListEqual(args, m.getParameterTypes()))
                     return m;
-                }
-            }
-            return null;
-        }
-
-        public static Method getMethod(Class<?> cl, String method, Integer args) {
-            for (Method m : cl.getMethods()) {
-                if (m.getName().equals(method)
-                        && args.equals(Integer.valueOf(m.getParameterTypes().length))) {
-                    return m;
-                }
-            }
             return null;
         }
 
         public static Method getMethod(Class<?> cl, String method) {
-            for (Method m : cl.getMethods()) {
-                if (m.getName().equals(method)) {
+            for (Method m : cl.getMethods()) 
+                if (m.getName().equals(method))
                     return m;
-                }
-            }
             return null;
         }
 
         public static boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
             boolean equal = true;
-
             if (l1.length != l2.length)
                 return false;
-            for (int i = 0; i < l1.length; i++) {
+            for (int i = 0; i < l1.length; i++)
                 if (l1[i] != l2[i]) {
                     equal = false;
                     break;
                 }
-            }
-
             return equal;
         }
+        
     }
+    
 }
