@@ -1,7 +1,7 @@
 package net.amoebaman.championsserver;
 
-import net.amoebaman.championsserver.utils.ChatUtils;
-import net.amoebaman.championsserver.utils.CommandController.CommandHandler;
+import net.amoebaman.utils.ChatUtils;
+import net.amoebaman.utils.CommandController.CommandHandler;
 import net.minecraft.util.com.google.common.collect.Lists;
 
 import org.bukkit.Bukkit;
@@ -13,13 +13,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class CommandListener {
 
-    @CommandHandler(name = "check-pt")
+    @CommandHandler(cmd = "check-pt")
     public void checkPtCommand(Player player, String[] args){
         player.sendMessage(ChatColor.ITALIC + "That " + TradeHandler.getName(player.getItemInHand()) + " is worth " + ChampionsServer.getPtValue(player.getItemInHand()) + "PT");
         player.sendMessage(ChatColor.ITALIC + "Your inventory is worth " + ChampionsServer.getPtValue(player.getInventory()) + "PT");
     }
 
-    @CommandHandler(name = "view-storage-chest")
+    @CommandHandler(cmd = "view-storage-chest")
     public void viewStorageChestCommand(Player player, String[] args){
         Player target = player;
         if(args.length > 0)
@@ -32,7 +32,7 @@ public class CommandListener {
         }
     }
 
-    @CommandHandler(name = "get-custom-item")
+    @CommandHandler(cmd = "get-custom-item")
     public void getCustomItemCommand(Player player, String[] args){
         if(args.length >= 1 && CustomItems.isCustomItem(args[0]))
             if(!LegendaryHandler.isLegend(args[0])){
@@ -47,7 +47,7 @@ public class CommandListener {
             player.sendMessage(ChatColor.RED + "Invalid custom item specified");
     }
 
-    @CommandHandler(name = "shards")
+    @CommandHandler(cmd = "shards")
     public void shardsCommand(CommandSender sender, String[] args){
         OfflinePlayer holder = ShardHandler.getCharmHolder();
         if(holder == null || holder.getName().equals("~CHARM~"))
@@ -73,7 +73,7 @@ public class CommandListener {
             }
     }
 
-    @CommandHandler(name = "shard-spawn")
+    @CommandHandler(cmd = "shard-spawn")
     public void shardSpawnCommand(Player player, String[] args){
         int num = Integer.parseInt(args[0]) - 1;
         ChampionsServer.sql.setShardSpawn(num, player.getLocation());
@@ -82,7 +82,7 @@ public class CommandListener {
         player.sendMessage("Spawn location for shard #" + args[0] + " set to current location");
     }
 
-    @CommandHandler(name = "legends")
+    @CommandHandler(cmd = "legends")
     public void legendsCommand(CommandSender sender, String[] args){
         for(ItemStack legend : LegendaryHandler.getLegends()){
             OfflinePlayer holder = ChampionsServer.sql.getLegendHolder(CustomItems.getName(legend));
@@ -97,7 +97,7 @@ public class CommandListener {
         }
     }
 
-    @CommandHandler(name = "legend-spawn")
+    @CommandHandler(cmd = "legend-spawn")
     public void legendSpawnCommand(Player player, String[] args){
         ItemStack legend = CustomItems.get(args[0]);
         String name = CustomItems.getName(legend);

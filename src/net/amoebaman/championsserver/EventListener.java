@@ -4,10 +4,10 @@ import java.util.*;
 
 import net.amoebaman.championsserver.tasks.SeekerTask;
 import net.amoebaman.championsserver.tasks.SeekerTask.Mode;
-import net.amoebaman.championsserver.utils.ParticleEffect;
 import net.amoebaman.championsserver.utils.Utils;
 import net.amoebaman.kitmaster.controllers.ItemController;
 import net.amoebaman.kitmaster.utilities.ParseItemException;
+import net.amoebaman.utils.ParticleEffect;
 
 import org.bukkit.*;
 import org.bukkit.block.*;

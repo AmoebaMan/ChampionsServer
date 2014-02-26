@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import net.amoebaman.championsserver.tasks.*;
 import net.amoebaman.championsserver.utils.*;
+import net.amoebaman.utils.CommandController;
 
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -79,7 +80,7 @@ public class ChampionsServer extends JavaPlugin{
 		Bukkit.getPluginManager().registerEvents(new ShardHandler(), this);
 		Bukkit.getPluginManager().registerEvents(new LegendaryHandler(), this);
 		Bukkit.getPluginManager().registerEvents(new TalismanEffectTask(), this);
-		CommandController.registerCommands(new CommandListener(), this);
+		CommandController.registerCommands(new CommandListener());
 		
 		getDataFolder().mkdirs();
 		mainDir = getDataFolder().getPath();
