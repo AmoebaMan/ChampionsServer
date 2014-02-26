@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class TradeMaster implements Listener, ConversationAbandonedListener{
+public class TradeHandler implements Listener, ConversationAbandonedListener{
 	
 	public static final String TRADER_NAME = "Dave";
 	public static final String PREFIX = "<" + ChatColor.LIGHT_PURPLE + "Merchant" + ChatColor.RESET + "> " + ChatColor.GRAY + TRADER_NAME + ": " + ChatColor.RESET;
@@ -42,10 +42,10 @@ public class TradeMaster implements Listener, ConversationAbandonedListener{
 	
 	public void conversationAbandoned(ConversationAbandonedEvent event) {
 		if(event.getCanceller() instanceof InactivityConversationCanceller){
-			event.getContext().getForWhom().sendRawMessage(TradeMaster.PREFIX + "You're spacin' out homie, come back when you're awake!");
+			event.getContext().getForWhom().sendRawMessage(TradeHandler.PREFIX + "You're spacin' out homie, come back when you're awake!");
 		}
 		if(event.getCanceller() instanceof ExactMatchConversationCanceller){
-			event.getContext().getForWhom().sendRawMessage(TradeMaster.PREFIX + "No need to be rude 'bout it, bro!");
+			event.getContext().getForWhom().sendRawMessage(TradeHandler.PREFIX + "No need to be rude 'bout it, bro!");
 		}
 	}
 	

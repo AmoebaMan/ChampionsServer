@@ -1,6 +1,6 @@
 package net.amoebaman.ffamaster.prompts;
 
-import net.amoebaman.ffamaster.TradeMaster;
+import net.amoebaman.ffamaster.TradeHandler;
 import net.amoebaman.ffamaster.objects.Trade;
 import net.amoebaman.ffamaster.objects.Trade.TradeType;
 
@@ -25,7 +25,7 @@ public class HowManyPrompt extends NumericPrompt{
     }
 	
 	public String getFailedValidationText(ConversationContext context, String input){
-		return ChatColor.RESET + TradeMaster.PREFIX + "C'mon guy, I can only handle so much at once.  No more than " + ChatColor.GREEN + getTrade(context).item.getType().getMaxStackSize() + ChatColor.RESET + " at once.";
+		return ChatColor.RESET + TradeHandler.PREFIX + "C'mon guy, I can only handle so much at once.  No more than " + ChatColor.GREEN + getTrade(context).item.getType().getMaxStackSize() + ChatColor.RESET + " at once.";
 	}
 	
 	public boolean isNumberValid(ConversationContext context, Number num){
@@ -39,8 +39,8 @@ public class HowManyPrompt extends NumericPrompt{
 		trade.total = trade.amount * trade.eachAt;
 		context.setSessionData("trade", trade);
 		
-    	if(trade.type == TradeType.SELLING && TradeMaster.getAmountInInventory(trade.item, player.getInventory()) < trade.amount){
-			player.sendRawMessage(TradeMaster.PREFIX + "Hey, c'mon homie, don't try to scam a bro.  I know you ain't got that much stuff with you.");
+    	if(trade.type == TradeType.SELLING && TradeHandler.getAmountInInventory(trade.item, player.getInventory()) < trade.amount){
+			player.sendRawMessage(TradeHandler.PREFIX + "Hey, c'mon homie, don't try to scam a bro.  I know you ain't got that much stuff with you.");
 			return new HowManyPrompt();
     	}
     	

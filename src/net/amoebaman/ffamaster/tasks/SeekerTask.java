@@ -4,9 +4,9 @@ import java.util.*;
 
 import net.amoebaman.ffamaster.CustomItems;
 import net.amoebaman.ffamaster.FFAMaster;
-import net.amoebaman.ffamaster.LegendMaster;
-import net.amoebaman.ffamaster.ShardMaster;
-import net.amoebaman.ffamaster.TradeMaster;
+import net.amoebaman.ffamaster.LegendaryHandler;
+import net.amoebaman.ffamaster.ShardHandler;
+import net.amoebaman.ffamaster.TradeHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,28 +25,28 @@ public class SeekerTask implements Runnable{
 				MODES.put(player, Mode.EQUAL);
 			Mode mode = MODES.get(player);
 			
-			if(TradeMaster.getAmountInInventory(CustomItems.get("seeker"), player.getInventory()) > 0){
+			if(TradeHandler.getAmountInInventory(CustomItems.get("seeker"), player.getInventory()) > 0){
 				
-				double range = 250 + (25 * TradeMaster.getAmountInInventory(CustomItems.get("clairvoyance_charm"), player.getInventory()));
+				double range = 250 + (25 * TradeHandler.getAmountInInventory(CustomItems.get("clairvoyance_charm"), player.getInventory()));
 				Set<Player> matches = new HashSet<Player>();
 				for(Player each : Bukkit.getOnlinePlayers())
 					if(each.getLocation().distance(player.getLocation()) < range){
 						boolean conditions = false;
 						switch(mode){
 							case BOSSES:
-								conditions = TradeMaster.getAmountInInventory(CustomItems.get("boss_charm"), each.getInventory()) > 0;
+								conditions = TradeHandler.getAmountInInventory(CustomItems.get("boss_charm"), each.getInventory()) > 0;
 								break;
 							case EQUAL:
 								conditions = Math.abs(FFAMaster.getPtValue(player.getInventory()) - FFAMaster.getPtValue(each.getInventory())) <= 5;
 								break;
 							case LEGENDS:
 								for(ItemStack item : each.getInventory().getContents())
-									if(LegendMaster.isLegend(item))
+									if(LegendaryHandler.isLegend(item))
 										conditions = true;
 								break;
 							case SHARDS:
 								for(ItemStack item : each.getInventory().getContents())
-									if(ShardMaster.isShard(item) || ShardMaster.isCharm(item))
+									if(ShardHandler.isShard(item) || ShardHandler.isCharm(item))
 										conditions = true;
 								break;
 							case STRONGER:

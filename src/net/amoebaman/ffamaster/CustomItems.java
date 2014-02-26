@@ -45,7 +45,7 @@ public class CustomItems {
 	
 	/**
 	 * Gets the storage name (lowercase, underscored) for this object.
-	 * For the friendly name, use {@link TradeMaster#getName(ItemStack)}.
+	 * For the friendly name, use {@link TradeHandler#getName(ItemStack)}.
 	 * @param item
 	 * @return
 	 */

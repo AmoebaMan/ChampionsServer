@@ -1,6 +1,6 @@
 package net.amoebaman.ffamaster.prompts;
 
-import net.amoebaman.ffamaster.TradeMaster;
+import net.amoebaman.ffamaster.TradeHandler;
 import net.amoebaman.ffamaster.objects.Trade;
 
 import org.bukkit.ChatColor;
@@ -28,7 +28,7 @@ public class BuyPrompt extends StringPrompt{
 	}
 	
 	public Prompt acceptInput(ConversationContext context, String input) {
-		ItemStack item = TradeMaster.getItem(input);
+		ItemStack item = TradeHandler.getItem(input);
 
 		Player player = getPlayer(context);
 		Trade trade = getTrade(context);
@@ -36,20 +36,20 @@ public class BuyPrompt extends StringPrompt{
 		context.setSessionData("trade", trade);
 		
 		if(item == null){
-			player.sendRawMessage(TradeMaster.PREFIX + "Dang man, you tripped up on something strong.  I ain't never heard of nothin' like that before.");
+			player.sendRawMessage(TradeHandler.PREFIX + "Dang man, you tripped up on something strong.  I ain't never heard of nothin' like that before.");
 			return new BuyPrompt();
 		}
 		
-		int price = TradeMaster.getBuyPrice(item);
+		int price = TradeHandler.getBuyPrice(item);
 		trade.eachAt = price;
 		context.setSessionData("trade", trade);
 		
 		if(price < 0){
-			player.sendRawMessage(TradeMaster.PREFIX + "Sorry bro, I don't have any " + ChatColor.GREEN + TradeMaster.getName(item) + "s" + ChatColor.RESET + " for sale.");
+			player.sendRawMessage(TradeHandler.PREFIX + "Sorry bro, I don't have any " + ChatColor.GREEN + TradeHandler.getName(item) + "s" + ChatColor.RESET + " for sale.");
 			return new BuyPrompt();
 		}
 		
-		player.sendRawMessage(TradeMaster.PREFIX + "Ehh, nice choice man.  I can get you " + ChatColor.GREEN + TradeMaster.getName(item) + "s" + ChatColor.RESET + " for " + ChatColor.GREEN + price + "LVL" + ChatColor.RESET + " each!");
+		player.sendRawMessage(TradeHandler.PREFIX + "Ehh, nice choice man.  I can get you " + ChatColor.GREEN + TradeHandler.getName(item) + "s" + ChatColor.RESET + " for " + ChatColor.GREEN + price + "LVL" + ChatColor.RESET + " each!");
 		if(trade.item.getType().getMaxStackSize() == 1){
 			trade.amount = 1;
 			trade.total = trade.amount * trade.eachAt;

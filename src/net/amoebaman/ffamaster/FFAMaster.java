@@ -75,9 +75,9 @@ public class FFAMaster extends JavaPlugin{
     public void onEnable(){
 		
 		Bukkit.getPluginManager().registerEvents(new EventListener(), this);
-		Bukkit.getPluginManager().registerEvents(new TradeMaster(), this);
-		Bukkit.getPluginManager().registerEvents(new ShardMaster(), this);
-		Bukkit.getPluginManager().registerEvents(new LegendMaster(), this);
+		Bukkit.getPluginManager().registerEvents(new TradeHandler(), this);
+		Bukkit.getPluginManager().registerEvents(new ShardHandler(), this);
+		Bukkit.getPluginManager().registerEvents(new LegendaryHandler(), this);
 		Bukkit.getPluginManager().registerEvents(new TalismanEffectTask(), this);
 		CommandController.registerCommands(new CommandListener(), this);
 		
@@ -93,13 +93,13 @@ public class FFAMaster extends JavaPlugin{
 			values = YamlConfiguration.loadConfiguration(valuesFile);
 			ptValues.clear();
 			for(String key : values.getConfigurationSection("pt-values").getKeys(false))
-				ptValues.put(TradeMaster.getItem(key), values.getDouble("pt-values." + key, 0.0));
+				ptValues.put(TradeHandler.getItem(key), values.getDouble("pt-values." + key, 0.0));
 			dropChances.clear();
 			for(String key : values.getConfigurationSection("drop-chances").getKeys(false))
-				dropChances.put(TradeMaster.getItem(key), values.getDouble("drop-chances." + key, 0.0));
+				dropChances.put(TradeHandler.getItem(key), values.getDouble("drop-chances." + key, 0.0));
 			buyPrices.clear();
 			for(String key : values.getConfigurationSection("prices.buy").getKeys(false))
-				buyPrices.put(TradeMaster.getItem(key), values.getInt("prices.buy." + key, -1));
+				buyPrices.put(TradeHandler.getItem(key), values.getInt("prices.buy." + key, -1));
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -113,8 +113,8 @@ public class FFAMaster extends JavaPlugin{
 		tasks.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new TalismanEffectTask(), 0L, 20L));
 		tasks.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new SeekerTask(), 0L, 20L));
 		tasks.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new SpawnItemsTask(), 0L, 100L));
-		tasks.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new ShardMaster(), 0L, 100L));
-		tasks.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new LegendMaster(), 0L, 100L));
+		tasks.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new ShardHandler(), 0L, 100L));
+		tasks.add(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new LegendaryHandler(), 0L, 100L));
 		
 		for(World world : Bukkit.getWorlds())
 			world.setGameRuleValue("keepInventory", "true");
@@ -281,7 +281,7 @@ public class FFAMaster extends JavaPlugin{
 	 * @return
 	 */
 	public static boolean isInteresting(ItemStack stack){
-		return getPtValue(stack) > 0 || CustomItems.isCustomItem(stack) || ShardMaster.isShard(stack) || ShardMaster.isCharm(stack);
+		return getPtValue(stack) > 0 || CustomItems.isCustomItem(stack) || ShardHandler.isShard(stack) || ShardHandler.isCharm(stack);
 	}
 	
 	/**
@@ -356,7 +356,7 @@ public class FFAMaster extends JavaPlugin{
 	public static Map<PotionEffectType, Integer> getTalismanEffects(Inventory inv){
 		Map<PotionEffectType, Integer> effects = new HashMap<PotionEffectType, Integer>();
 		for(PotionEffectType type : PotionEffectType.values()){
-			int amount = TradeMaster.getAmountInInventory(CustomItems.get(Utils.getPotionEffectName(type).toLowerCase().replace(' ', '_') + "_talisman"), inv);
+			int amount = TradeHandler.getAmountInInventory(CustomItems.get(Utils.getPotionEffectName(type).toLowerCase().replace(' ', '_') + "_talisman"), inv);
 			if(amount > 0)
 				effects.put(type, amount - 1);
 		}
@@ -429,7 +429,7 @@ public class FFAMaster extends JavaPlugin{
 	 * @return the player's PT score cap
 	 */
 	public static int getPtCap(Player player){
-		return 35 + (TradeMaster.getAmountInInventory(CustomItems.get("boss_charm"), player.getInventory()) * 5);
+		return 35 + (TradeHandler.getAmountInInventory(CustomItems.get("boss_charm"), player.getInventory()) * 5);
 	}
 	
 }

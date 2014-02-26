@@ -1,7 +1,7 @@
 package net.amoebaman.ffamaster.prompts;
 
 import net.amoebaman.ffamaster.FFAMaster;
-import net.amoebaman.ffamaster.TradeMaster;
+import net.amoebaman.ffamaster.TradeHandler;
 import net.amoebaman.ffamaster.objects.Trade;
 import net.amoebaman.ffamaster.objects.Trade.TradeType;
 
@@ -28,7 +28,7 @@ public class ConfirmPrompt extends FixedSetPrompt{
 	public String getPromptText(ConversationContext context) {
 		Trade trade = getTrade(context);
 		
-		return "So you're gonna " + (trade.type == TradeType.BUYING ? "buy" : "sell") + " " + trade.amount + " " + ChatColor.GREEN + TradeMaster.getName(trade.item) + (trade.amount > 1 ? "s" : "") + ChatColor.RESET + "?" +
+		return "So you're gonna " + (trade.type == TradeType.BUYING ? "buy" : "sell") + " " + trade.amount + " " + ChatColor.GREEN + TradeHandler.getName(trade.item) + (trade.amount > 1 ? "s" : "") + ChatColor.RESET + "?" +
 				"  That's gonna " + (trade.type == TradeType.BUYING ? "run you" : "net you") + " " + trade.total + "LVL total.  " + ChatColor.GREEN + "Yes" + ChatColor.RESET + " or " + ChatColor.GREEN + "no" + ChatColor.RESET +
 				", are you gonna " + (trade.type == TradeType.BUYING ? "buy" : "sell") + "?";
 	}
@@ -50,18 +50,18 @@ public class ConfirmPrompt extends FixedSetPrompt{
 		Trade trade = getTrade(context);
 		
 		if(input.equals("no"))
-			context.getForWhom().sendRawMessage(TradeMaster.PREFIX + "Sorry you changed your mind, homie.");
+			context.getForWhom().sendRawMessage(TradeHandler.PREFIX + "Sorry you changed your mind, homie.");
 		if(input.equals("yes")){
 			if(trade.type == TradeType.BUYING){
 				if(player.getLevel() < trade.total){
-					player.sendRawMessage(TradeMaster.PREFIX + "Hey I'm sorry bro, but you ain't got the dough for that!");
-					player.sendRawMessage(TradeMaster.PREFIX + "Come back when you've gotten off your lazy bum and gotten some real cash!");
+					player.sendRawMessage(TradeHandler.PREFIX + "Hey I'm sorry bro, but you ain't got the dough for that!");
+					player.sendRawMessage(TradeHandler.PREFIX + "Come back when you've gotten off your lazy bum and gotten some real cash!");
 				}
 				else{
 					trade.item.setAmount(trade.amount);
 					player.getInventory().addItem(trade.item);
 					player.setLevel(player.getLevel() - trade.total);
-					player.sendRawMessage(TradeMaster.PREFIX + "Have fun with your new toys, bro!");
+					player.sendRawMessage(TradeHandler.PREFIX + "Have fun with your new toys, bro!");
 				}
 			}
 			else{
@@ -81,7 +81,7 @@ public class ConfirmPrompt extends FixedSetPrompt{
 					}
 				}
 				player.setLevel(player.getLevel() + trade.total);
-				player.sendRawMessage(TradeMaster.PREFIX + "There's your cash, thanks a bunch homie!");
+				player.sendRawMessage(TradeHandler.PREFIX + "There's your cash, thanks a bunch homie!");
 			}
 		}
 		return Prompt.END_OF_CONVERSATION;

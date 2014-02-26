@@ -15,7 +15,7 @@ public class CommandListener {
 
     @CommandHandler(name = "check-pt")
     public void checkPtCommand(Player player, String[] args){
-        player.sendMessage(ChatColor.ITALIC + "That " + TradeMaster.getName(player.getItemInHand()) + " is worth " + FFAMaster.getPtValue(player.getItemInHand()) + "PT");
+        player.sendMessage(ChatColor.ITALIC + "That " + TradeHandler.getName(player.getItemInHand()) + " is worth " + FFAMaster.getPtValue(player.getItemInHand()) + "PT");
         player.sendMessage(ChatColor.ITALIC + "Your inventory is worth " + FFAMaster.getPtValue(player.getInventory()) + "PT");
     }
 
@@ -35,7 +35,7 @@ public class CommandListener {
     @CommandHandler(name = "get-custom-item")
     public void getCustomItemCommand(Player player, String[] args){
         if(args.length >= 1 && CustomItems.isCustomItem(args[0]))
-            if(!LegendMaster.isLegend(args[0])){
+            if(!LegendaryHandler.isLegend(args[0])){
                 ItemStack item = CustomItems.get(args[0]);
                 if(args.length >= 2)
                     item.setAmount(Integer.parseInt(args[1]));
@@ -49,7 +49,7 @@ public class CommandListener {
 
     @CommandHandler(name = "shards")
     public void shardsCommand(CommandSender sender, String[] args){
-        OfflinePlayer holder = ShardMaster.getCharmHolder();
+        OfflinePlayer holder = ShardHandler.getCharmHolder();
         if(holder == null || holder.getName().equals("~CHARM~"))
             for(int i = 0; i < FFAMaster.sql.getNumShards(); i++){
                 holder = FFAMaster.sql.getShardHolder(i);
@@ -59,7 +59,7 @@ public class CommandListener {
                     sender.sendMessage(ChatColor.YELLOW + "Nobody holds Wellspring Shard #" + (i+1));
                 else{
                     int offlineHours = (int) ((System.currentTimeMillis() - holder.getLastPlayed()) / 1000.0 / 60.0 / 60.0);
-                    sender.sendMessage(ChatColor.RED + holder.getName() + " holds Wellspring Shard #" + (i+1) + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, ShardMaster.shardOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
+                    sender.sendMessage(ChatColor.RED + holder.getName() + " holds Wellspring Shard #" + (i+1) + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, ShardHandler.shardOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
                 }
             }
         else
@@ -69,7 +69,7 @@ public class CommandListener {
                 sender.sendMessage(ChatColor.YELLOW + "Nobody holds the Wellspring Charm");
             else{
                 int offlineHours = (int) ((System.currentTimeMillis() - holder.getLastPlayed()) / 1000.0 / 60.0 / 60.0);
-                sender.sendMessage(ChatColor.RED + holder.getName() + " holds the Wellspring Charm" + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, ShardMaster.shardOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
+                sender.sendMessage(ChatColor.RED + holder.getName() + " holds the Wellspring Charm" + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, ShardHandler.shardOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
             }
     }
 
@@ -78,21 +78,21 @@ public class CommandListener {
         int num = Integer.parseInt(args[0]) - 1;
         FFAMaster.sql.setShardSpawn(num, player.getLocation());
         if(FFAMaster.sql.getShardHolder(num) == null)
-            ShardMaster.spawnShard(num);
+            ShardHandler.spawnShard(num);
         player.sendMessage("Spawn location for shard #" + args[0] + " set to current location");
     }
 
     @CommandHandler(name = "legends")
     public void legendsCommand(CommandSender sender, String[] args){
-        for(ItemStack legend : LegendMaster.getLegends()){
+        for(ItemStack legend : LegendaryHandler.getLegends()){
             OfflinePlayer holder = FFAMaster.sql.getLegendHolder(CustomItems.getName(legend));
             if(sender.equals(holder))
-                sender.sendMessage(ChatColor.GREEN + "You hold " + TradeMaster.getName(legend));
+                sender.sendMessage(ChatColor.GREEN + "You hold " + TradeHandler.getName(legend));
             else if(holder == null)
-                sender.sendMessage(ChatColor.YELLOW + "Nobody holds " + TradeMaster.getName(legend));
+                sender.sendMessage(ChatColor.YELLOW + "Nobody holds " + TradeHandler.getName(legend));
             else{
                 int offlineHours = (int) ((System.currentTimeMillis() - holder.getLastPlayed()) / 1000.0 / 60.0 / 60.0);
-                sender.sendMessage(ChatColor.RED + holder.getName() + " holds " + TradeMaster.getName(legend) + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, LegendMaster.legendOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
+                sender.sendMessage(ChatColor.RED + holder.getName() + " holds " + TradeHandler.getName(legend) + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, LegendaryHandler.legendOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
             }
         }
     }
@@ -103,8 +103,8 @@ public class CommandListener {
         String name = CustomItems.getName(legend);
         FFAMaster.sql.setLegendSpawn(name, player.getLocation());
         if(FFAMaster.sql.getLegendHolder(name) == null)
-            LegendMaster.spawnLegend(name);
-        player.sendMessage("Spawn location for " + TradeMaster.getName(legend) + " set to current location");
+            LegendaryHandler.spawnLegend(name);
+        player.sendMessage("Spawn location for " + TradeHandler.getName(legend) + " set to current location");
     }
 
 }

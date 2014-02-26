@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 import net.amoebaman.ffamaster.CustomItems;
 import net.amoebaman.ffamaster.FFAMaster;
-import net.amoebaman.ffamaster.ShardMaster;
+import net.amoebaman.ffamaster.ShardHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -29,7 +29,7 @@ public class TalismanEffectTask implements Runnable, Listener {
 			MAP = FFAMaster.getTalismanEffects(player.getInventory());
 			
 			if(player.getInventory().contains(CustomItems.get("wellspring_charm")))
-				for(Entry<PotionEffectType, Integer> entry : ShardMaster.getCharmBonuses().entrySet()){
+				for(Entry<PotionEffectType, Integer> entry : ShardHandler.getCharmBonuses().entrySet()){
 					if(!MAP.containsKey(entry.getKey()))
 						MAP.put(entry.getKey(), entry.getValue());
 					else

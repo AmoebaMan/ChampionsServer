@@ -261,7 +261,7 @@ public class EventListener implements Listener{
 		Player victim = event.getEntity();
 		Player killer = victim.getKiller();
 		int xp = FFAMaster.getPtValue(victim.getInventory()) * 2;
-		xp += TradeMaster.getAmountInInventory(CustomItems.get("boss_charm"), victim.getInventory()) * 25;
+		xp += TradeHandler.getAmountInInventory(CustomItems.get("boss_charm"), victim.getInventory()) * 25;
 		xp += victim.getLevel() * 10;
 		double ratio = 1.0 * FFAMaster.getPtValue(victim.getInventory()) / (killer != null ? FFAMaster.getPtValue(killer.getInventory()) : 0);
 		xp *= ratio > 3 ? 3 : ratio;
@@ -563,7 +563,7 @@ public class EventListener implements Listener{
 				count.put(type, 0);
 			List<LivingEntity> spotted = new ArrayList<LivingEntity>();
 			
-			for(Block block : player.getLineOfSight(FFAMaster.transparent, 50 + (TradeMaster.getAmountInInventory(CustomItems.get("clairvoyance_charm"), player.getInventory()) * 10)))
+			for(Block block : player.getLineOfSight(FFAMaster.transparent, 50 + (TradeHandler.getAmountInInventory(CustomItems.get("clairvoyance_charm"), player.getInventory()) * 10)))
 				for(Entity e : block.getChunk().getEntities())
 					if(e instanceof LivingEntity && e.getLocation().distance(block.getLocation()) < 10 && !spotted.contains(e) && !e.equals(player)){
 						spotted.add((LivingEntity) e);

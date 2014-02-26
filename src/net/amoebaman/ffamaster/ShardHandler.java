@@ -17,7 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.google.common.collect.Lists;
 
-public class ShardMaster implements Listener, Runnable{
+public class ShardHandler implements Listener, Runnable{
 	
 	public static ItemStack getShard(int number){
 		ItemStack item = new ItemStack(Material.QUARTZ);
@@ -65,7 +65,7 @@ public class ShardMaster implements Listener, Runnable{
 	}
 	
 	public static int getShardNumber(ItemStack stack){
-		String name = TradeMaster.getName(stack);
+		String name = TradeHandler.getName(stack);
 		name = name.replace("Wellspring Shard #", "");
 		return Integer.parseInt(name) - 1;
 	}

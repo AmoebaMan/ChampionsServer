@@ -1,6 +1,6 @@
 package net.amoebaman.ffamaster.prompts;
 
-import net.amoebaman.ffamaster.TradeMaster;
+import net.amoebaman.ffamaster.TradeHandler;
 import net.amoebaman.ffamaster.objects.Trade;
 import net.amoebaman.ffamaster.objects.Trade.TradeType;
 
@@ -54,7 +54,7 @@ public class ActionPrompt extends FixedSetPrompt{
 		
 		if(trade.type == TradeType.BUYING)
 			if(getPlayer(context).getInventory().firstEmpty() == -1){
-				player.sendRawMessage("<" + TradeMaster.TRADER_NAME + "> Yo, your pockets are full, man!  You ain't got no room left!");
+				player.sendRawMessage("<" + TradeHandler.TRADER_NAME + "> Yo, your pockets are full, man!  You ain't got no room left!");
 				return Prompt.END_OF_CONVERSATION;
 			}
 			else

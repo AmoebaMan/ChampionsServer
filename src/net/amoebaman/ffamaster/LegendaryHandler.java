@@ -25,7 +25,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class LegendMaster implements Listener, Runnable{
+public class LegendaryHandler implements Listener, Runnable{
 	
 	public static void spawnLegend(String name){
 		
