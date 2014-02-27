@@ -15,6 +15,9 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -27,6 +30,15 @@ import org.bukkit.potion.PotionEffectType;
 import com.google.common.collect.Lists;
 
 public class Utils {
+    
+    public static LivingEntity getCulprit(EntityDamageByEntityEvent event){
+        if(event.getDamager() instanceof LivingEntity)
+            return (LivingEntity) event.getDamager();
+        else if(event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof LivingEntity)
+            return (LivingEntity) ((Projectile) event.getDamager()).getShooter();
+        else
+            return null;
+    }
 	
 	public static <E> E getRandomElement(Collection<E> set){
 		E element = null;
