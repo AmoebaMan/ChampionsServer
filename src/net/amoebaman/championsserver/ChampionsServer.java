@@ -129,7 +129,7 @@ public class ChampionsServer extends JavaPlugin{
 				case AIR: case GRASS: case DIRT: case COBBLESTONE: case STONE: case SAND: case SNOW: case SNOW_BLOCK: case GRAVEL:
 				case LONG_GRASS: case YELLOW_FLOWER: case RED_ROSE: case DOUBLE_PLANT: case LOG: case LOG_2: case FENCE: case LEAVES: case LEAVES_2:
 				case WATER: case STATIONARY_WATER: case LAVA: case STATIONARY_LAVA: case RED_MUSHROOM: case BROWN_MUSHROOM: case VINE:
-				case WATER_LILY: case CACTUS: case DEAD_BUSH: case COCOA:
+				case WATER_LILY: case CACTUS: case DEAD_BUSH: case COCOA: case ICE: case PACKED_ICE:
 					natural.add(mat);
 				default:
 			}
