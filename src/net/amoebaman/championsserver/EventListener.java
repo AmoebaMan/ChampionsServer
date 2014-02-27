@@ -53,8 +53,8 @@ public class EventListener implements Listener{
 	@EventHandler
 	public void protectHangersFromBreaking(HangingBreakByEntityEvent event){
 		Entity culprit = event.getRemover();
-		if(culprit instanceof Projectile)
-			culprit = ((Projectile) culprit).getShooter();
+		if(culprit instanceof Projectile && ((Projectile) culprit).getShooter() instanceof Entity)
+			culprit = (Entity) ((Projectile) culprit).getShooter();
 		if(culprit instanceof Player && ((Player) culprit).getGameMode() != GameMode.CREATIVE)
 			event.setCancelled(true);
 		if(culprit instanceof Player && ((Player) culprit).getGameMode() == GameMode.ADVENTURE){
@@ -67,8 +67,8 @@ public class EventListener implements Listener{
 	@EventHandler
 	public void protectFramesFromExtraction(EntityDamageByEntityEvent event){
 		Entity culprit = event.getDamager();
-		if(culprit instanceof Projectile)
-			culprit = ((Projectile) culprit).getShooter();
+		if(culprit instanceof Projectile && ((Projectile) culprit).getShooter() instanceof Entity)
+			culprit = (Entity) ((Projectile) culprit).getShooter();
 		if(event.getEntity() instanceof Hanging && culprit instanceof Player && ((Player) culprit).getGameMode() != GameMode.CREATIVE)
 			event.setCancelled(true);
 	}
@@ -83,7 +83,7 @@ public class EventListener implements Listener{
 	public void infiniteEnderPearls(final ProjectileLaunchEvent event){
 		if(event.getEntity().getType() == EntityType.ENDER_PEARL){
 			EnderPearl pearl = (EnderPearl) event.getEntity();
-			if(pearl.getShooter() != null && pearl.getShooter().getType() == EntityType.PLAYER)
+			if(pearl.getShooter() != null && pearl.getShooter() instanceof Entity && ((Entity) pearl.getShooter()).getType() == EntityType.PLAYER)
 				Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 					((Player) event.getEntity().getShooter()).setItemInHand(new ItemStack(Material.ENDER_PEARL));
 				}});
@@ -110,9 +110,9 @@ public class EventListener implements Listener{
 	public void bowPowerStrengthBuff(ProjectileLaunchEvent event){
 		if(event.getEntityType() == EntityType.ARROW){
 			Arrow arrow = (Arrow) event.getEntity();
-			if(arrow.getShooter() != null && arrow.getShooter().getType() == EntityType.PLAYER){
+			if(arrow.getShooter() != null && arrow.getShooter() instanceof Player){
 				double multiplier = 1.3f;
-				for(PotionEffect effect : arrow.getShooter().getActivePotionEffects()){
+				for(PotionEffect effect : ((Player) arrow.getShooter()).getActivePotionEffects()){
 					if(effect.getType().equals(PotionEffectType.INCREASE_DAMAGE))
 						multiplier += 0.3 * (effect.getAmplifier() + 1);
 					if(effect.getType().equals(PotionEffectType.WEAKNESS))
@@ -154,7 +154,7 @@ public class EventListener implements Listener{
 				damager = (Player) eEvent.getDamager();
 			else if(eEvent.getDamager().getType() == EntityType.ARROW){
 				Arrow arrow = (Arrow) eEvent.getDamager();
-				if(arrow.getShooter() != null && arrow.getShooter().getType() == EntityType.PLAYER)
+				if(arrow.getShooter() != null && arrow.getShooter() instanceof Player)
 					damager = (Player) arrow.getShooter();
 				else
 					damager = null;
@@ -176,7 +176,7 @@ public class EventListener implements Listener{
 	public void infiniteBowDurability(ProjectileLaunchEvent event){
 		if(event.getEntityType() == EntityType.ARROW){
 			final Arrow arrow = (Arrow) event.getEntity();
-			if(arrow.getShooter() != null && arrow.getShooter().getType() == EntityType.PLAYER)
+			if(arrow.getShooter() != null && arrow.getShooter() instanceof Player)
 				Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 					((Player) arrow.getShooter()).getItemInHand().setDurability((short) 0);
 					((Player) arrow.getShooter()).updateInventory();
