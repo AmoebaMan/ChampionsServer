@@ -150,20 +150,9 @@ public class EventListener implements Listener{
                     }});
         }
         if(event instanceof EntityDamageByEntityEvent){
-            EntityDamageByEntityEvent eEvent = (EntityDamageByEntityEvent) event;
-            final Player damager;
-            if(eEvent.getDamager().getType() == EntityType.PLAYER)
-                damager = (Player) eEvent.getDamager();
-            else if(eEvent.getDamager().getType() == EntityType.ARROW){
-                Arrow arrow = (Arrow) eEvent.getDamager();
-                if(arrow.getShooter() != null && arrow.getShooter() instanceof Player)
-                    damager = (Player) arrow.getShooter();
-                else
-                    damager = null;
-            }
-            else
-                damager = null;
-            if(damager != null){
+            LivingEntity culprit = Utils.getCulprit((EntityDamageByEntityEvent) event);
+            if(culprit instanceof Player){
+            	final Player damager = (Player) culprit;
                 Material weapon = damager.getItemInHand().getType();
                 if(weapon.name().contains("SWORD") || weapon.name().contains("AXE"))
                     Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
@@ -407,7 +396,7 @@ public class EventListener implements Listener{
             }});
             Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
                 player.sendMessage(ChatColor.GREEN + "To help you out as a new player, we've given you some basic gear to start off with");
-                player.sendMessage(ChatColor.GREEN + "Go wander around spawn city to learn more about the server");
+                player.sendMessage(ChatColor.GREEN + "Go poke around spawn to learn more about the server");
                 player.sendMessage(ChatColor.GREEN + "All the answers you need are here");
                 PlayerInventory inv = player.getInventory();
                 try {
@@ -542,13 +531,12 @@ public class EventListener implements Listener{
         }
     }
 
-    /*
 	private long aardegrafCooldown = 0;
 	@EventHandler
 	public void aardegrafAbility(PlayerInteractEvent event){
 		final Player player = event.getPlayer();
-		if(event.getAction() == Action.RIGHT_CLICK_AIR && FFAMaster.sameItem(event.getItem(), CustomItems.get("aardegraf")) && player.getLevel() > 0 && System.currentTimeMillis() - aardegrafCooldown >= 2000){
-			Block target = player.getTargetBlock(FFAMaster.transparent, 150);
+		if(event.getAction() == Action.RIGHT_CLICK_AIR && ChampionsServer.sameItem(event.getItem(), CustomItems.get("aardegraf")) && player.getLevel() > 0 && System.currentTimeMillis() - aardegrafCooldown >= 2000){
+			Block target = player.getTargetBlock(ChampionsServer.transparent, 150);
 			for(int x = -2; x <= 2; x++)
 				for(int y = -1; y <= 1; y++)
 					for(int z = -2; z <= 2; z++){
@@ -561,12 +549,11 @@ public class EventListener implements Listener{
 							case COBBLESTONE:
 							case GRAVEL:
 							case SAND:
-							case SANDSTONE:
-								Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+								Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 									other.setTypeIdAndData(0, (byte) 0, false);
 									other.getWorld().playSound(other.getLocation(), Sound.DIG_GRAVEL, 1, 0.5f);
 								}}, Math.abs(x)-y*2+Math.abs(z));
-								Bukkit.getScheduler().scheduleSyncDelayedTask(FFAMaster.plugin(), new Runnable(){ public void run(){
+								Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
 									state.update(true, false);
 									other.getWorld().playSound(other.getLocation(), Sound.DIG_STONE, 1, 0.5f);
 								}}, 30-(Math.abs(x)-y*2+Math.abs(z)));
@@ -581,7 +568,6 @@ public class EventListener implements Listener{
 			aardegrafCooldown = System.currentTimeMillis();
 		}
 	}
-     */
 
     @EventHandler
     public void binocularsAbility(PlayerInteractEvent event){
