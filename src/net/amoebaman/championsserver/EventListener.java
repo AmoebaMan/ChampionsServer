@@ -7,9 +7,7 @@ import net.amoebaman.championsserver.tasks.SeekerTask.Mode;
 import net.amoebaman.championsserver.utils.Utils;
 import net.amoebaman.kitmaster.controllers.ItemController;
 import net.amoebaman.kitmaster.utilities.ParseItemException;
-import net.amoebaman.utils.ParticleEffect;
-import net.amoebaman.utils.PlayerMap;
-import net.amoebaman.utils.StatusBarAPI;
+import net.amoebaman.utils.nms.ParticleEffect;
 
 import org.bukkit.*;
 import org.bukkit.block.*;
@@ -172,34 +170,6 @@ public class EventListener implements Listener{
                     ((Player) arrow.getShooter()).getItemInHand().setDurability((short) 0);
                     ((Player) arrow.getShooter()).updateInventory();
                 }});
-        }
-    }
-
-    private final PlayerMap<Integer> removeBarTasks = new PlayerMap<Integer>();
-    @EventHandler
-    public void enemyHealthBar(EntityDamageEvent event){
-        if(!(event.getEntity() instanceof LivingEntity && event instanceof EntityDamageByEntityEvent))
-            return;
-
-        final LivingEntity victim = (LivingEntity) event.getEntity();
-        final String victimName = ChatColor.stripColor(victim instanceof Player ? ((Player) victim).getName() : victim.getCustomName() == null ? Utils.capitalize(victim.getType().name().replace('_', ' ')) : victim.getCustomName());
-
-        final LivingEntity culprit = Utils.getCulprit((EntityDamageByEntityEvent) event);
-
-        if(culprit instanceof Player){
-            final Player player = (Player) culprit;
-            Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
-                if(removeBarTasks.containsKey(player))
-                    Bukkit.getScheduler().cancelTask(removeBarTasks.get(player));
-                if(!victim.isDead()){
-                    StatusBarAPI.setStatusBar(player, victimName, (float) victim.getHealth() / (float) victim.getMaxHealth());
-                    removeBarTasks.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(ChampionsServer.plugin(), new Runnable(){ public void run(){
-                        StatusBarAPI.removeStatusBar(player);
-                    }}, 60L));
-                }
-                else
-                    StatusBarAPI.removeStatusBar(player);
-            }}, 2L);
         }
     }
 
