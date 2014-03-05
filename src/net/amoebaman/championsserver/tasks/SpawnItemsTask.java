@@ -4,7 +4,7 @@ import java.util.Map.Entry;
 
 import net.amoebaman.championsserver.ChampionsServer;
 import net.amoebaman.championsserver.CustomItems;
-import net.amoebaman.championsserver.utils.Utils;
+import net.amoebaman.utils.GenUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -55,7 +55,7 @@ public class SpawnItemsTask implements Runnable {
 					
 					drop = null;
 					for(int k = 0; k < itemAttempts; k++){
-						entry = Utils.getRandomElement(ChampionsServer.dropChances.entrySet());
+						entry = GenUtil.getRandomElement(ChampionsServer.dropChances.entrySet());
 						if(Math.random() > entry.getValue())
 							drop = null;
 						else
@@ -66,7 +66,7 @@ public class SpawnItemsTask implements Runnable {
 						enc = null;
 						int tries = 0;
 						do{
-							enc = Utils.getRandomElement(ChampionsServer.enchants);
+							enc = GenUtil.getRandomElement(ChampionsServer.enchants);
 							tries++;
 						} while(!enc.canEnchantItem(drop) && tries < itemAttempts);
 						if(enc.canEnchantItem(drop))

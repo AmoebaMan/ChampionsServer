@@ -1,8 +1,6 @@
 package net.amoebaman.championsserver.utils;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -39,14 +37,6 @@ public class Utils {
         else
             return null;
     }
-	
-	public static <E> E getRandomElement(Collection<E> set){
-		E element = null;
-		Iterator<E> it = set.iterator();
-		for(int i = 0; i < Math.random() * set.size() && it.hasNext(); i++)
-			element = it.next();
-		return element;
-	}
 	
 	public static String friendlyItemString(ItemStack stack){
 		String str = stack.getItemMeta().hasDisplayName() ? stack.getItemMeta().getDisplayName() : stack.getType().name().toLowerCase().replace("_", " ") + (stack.getAmount() > 1 ? "s" : "");
