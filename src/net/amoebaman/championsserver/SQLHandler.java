@@ -1,11 +1,15 @@
 package net.amoebaman.championsserver;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.sql.*;
 import java.util.*;
 
-import net.amoebaman.championsserver.utils.Utils;
+import net.amoebaman.utils.Json;
 
 import org.bukkit.*;
+import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonReader;
+import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonWriter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.*;
@@ -60,7 +64,7 @@ public class SQLHandler {
 	final String create_shards_table = 
 			"CREATE TABLE IF NOT EXISTS " + shards_table + "( " +
 					number_column + " INT NOT NULL, " +
-					holder_column + " VARCHAR(16) DEFAULT \"none\", " +
+					holder_column + " VARCHAR(16) DEFAULT 'none', " +
 					spawn_loc_column + " TEXT, " +
 					"PRIMARY KEY (" + number_column + ") " +
 					")";
@@ -68,64 +72,64 @@ public class SQLHandler {
 	final String create_legends_table =
 			"CREATE TABLE IF NOT EXISTS " + legends_table + "( " +
 					name_column + " VARCHAR(50) NOT NULL, " +
-					holder_column + " VARCHAR(16) DEFAULT \"none\", " +
+					holder_column + " VARCHAR(16) DEFAULT 'none', " +
 					spawn_loc_column + " TEXT, " +
 					"PRIMARY KEY (" + name_column + ") " +
 					")";
 	
 	final String add_player_inventory =
 			"INSERT INTO " + inventory_table + "(" + player_column + ", " + inventory_column + ", " + armor_column + ", " + chest_column + ") " +
-					"VALUES(\"" + player_macro + "\", \"empty\", \"empty\", \"empty\")";
+					"VALUES('" + player_macro + "', 'empty', 'empty', 'empty')";
 	
 	final String add_player_misc =
 			"INSERT INTO " + misc_table + "(" + player_column + ", " + datastring_column + ") " +
-					"VALUES(\"" + player_macro + "\", \"empty\")";
+					"VALUES('" + player_macro + "', 'empty')";
 	
 	final String update_player_inventory =
 			"UPDATE " + inventory_table + " " +
-					"SET " + inventory_column + " = \"" + value_macro + "\" " +
-					"WHERE " + player_column + " = \"" + player_macro + "\"";
+					"SET " + inventory_column + " = '" + value_macro + "' " +
+					"WHERE " + player_column + " = '" + player_macro + "'";
 	
 	final String update_player_armor =
 			"UPDATE " + inventory_table + " " +
-					"SET " + armor_column + " = \"" + value_macro + "\" " +
-					"WHERE " + player_column + " = \"" + player_macro + "\"";
+					"SET " + armor_column + " = '" + value_macro + "' " +
+					"WHERE " + player_column + " = '" + player_macro + "'";
 	
 	final String update_player_chest =
 			"UPDATE " + inventory_table + " " +
-					"SET " + chest_column + " = \"" + value_macro + "\" " +
-					"WHERE " + player_column + " = \"" + player_macro + "\"";
+					"SET " + chest_column + " = '" + value_macro + "' " +
+					"WHERE " + player_column + " = '" + player_macro + "'";
 	
 	final String update_player_datastring =
 			"UPDATE " + misc_table + " " +
-					"SET " + datastring_column + " = \"" + value_macro + "\" " +
-					"WHERE " + player_column + " = \"" + player_macro + "\"";
+					"SET " + datastring_column + " = '" + value_macro + "' " +
+					"WHERE " + player_column + " = '" + player_macro + "'";
 	
 	final String get_player_inventory =
 			"SELECT " + inventory_column + " FROM " + inventory_table + " " +
-					"WHERE " + player_column + " = \"" + player_macro + "\"";
+					"WHERE " + player_column + " = '" + player_macro + "'";
 	
 	final String get_player_armor =
 			"SELECT " + armor_column + " FROM " + inventory_table + " " +
-					"WHERE " + player_column + " = \"" + player_macro + "\"";
+					"WHERE " + player_column + " = '" + player_macro + "'";
 	
 	final String get_player_chest =
 			"SELECT " + chest_column + " FROM " + inventory_table + " " +
-					"WHERE " + player_column + " = \"" + player_macro + "\"";
+					"WHERE " + player_column + " = '" + player_macro + "'";
 	
 	final String get_player_datastring =
 			"SELECT " + datastring_column + " FROM " + misc_table + " " +
-					"WHERE " + player_column + " = \"" + player_macro + "\"";
+					"WHERE " + player_column + " = '" + player_macro + "'";
 	
 	final String set_shard_holder = 
 			"INSERT INTO " + shards_table + "(" + number_column + ", " + holder_column + ") " +
-					"VALUES(" + number_macro + ", \"" + value_macro + "\")" +
-							"ON DUPLICATE KEY UPDATE " + holder_column + " = \"" + value_macro + "\"";
+					"VALUES(" + number_macro + ", '" + value_macro + "')" +
+							"ON DUPLICATE KEY UPDATE " + holder_column + " = '" + value_macro + "'";
 	
 	final String set_shard_spawn = 
 			"INSERT INTO " + shards_table + "(" + number_column + ", " + spawn_loc_column + ") " +
-					"VALUES(" + number_macro + ", \"" + value_macro + "\")" +
-							"ON DUPLICATE KEY UPDATE " + spawn_loc_column + " = \"" + value_macro + "\"";
+					"VALUES(" + number_macro + ", '" + value_macro + "')" +
+							"ON DUPLICATE KEY UPDATE " + spawn_loc_column + " = '" + value_macro + "'";
 	
 	final String get_shard_holder = 
 			"SELECT " + holder_column + " FROM " + shards_table + " " +
@@ -140,21 +144,21 @@ public class SQLHandler {
 	
 	final String set_legend_holder = 
 			"INSERT INTO " + legends_table + "(" + name_column + ", " + holder_column + ") " +
-					"VALUES(\"" + name_macro + "\", \"" + value_macro + "\")" +
-							"ON DUPLICATE KEY UPDATE " + holder_column + " = \"" + value_macro + "\"";
+					"VALUES('" + name_macro + "', '" + value_macro + "')" +
+							"ON DUPLICATE KEY UPDATE " + holder_column + " = '" + value_macro + "'";
 	
 	final String set_legend_spawn = 
 			"INSERT INTO " + legends_table + "(" + name_column + ", " + spawn_loc_column + ") " +
-					"VALUES(\"" + name_macro + "\", \"" + value_macro + "\")" +
-							"ON DUPLICATE KEY UPDATE " + spawn_loc_column + " = \"" + value_macro + "\"";
+					"VALUES('" + name_macro + "', '" + value_macro + "')" +
+							"ON DUPLICATE KEY UPDATE " + spawn_loc_column + " = '" + value_macro + "'";
 	
 	final String get_legend_holder = 
 			"SELECT " + holder_column + " FROM " + legends_table + " " +
-					"WHERE " + name_column + " = \"" + name_macro + "\"";
+					"WHERE " + name_column + " = '" + name_macro + "'";
 	
 	final String get_legend_spawn = 
 			"SELECT " + spawn_loc_column + " FROM " + legends_table + " " +
-					"WHERE " + name_column + " = \"" + name_macro + "\"";
+					"WHERE " + name_column + " = '" + name_macro + "'";
 	
 	final String get_legends =
 			"SELECT * FROM " + legends_table;
@@ -179,39 +183,28 @@ public class SQLHandler {
 		}
 	}
 	
-	private static final String itemSeparator = "~i~";
-	
 	public void saveInventory(Player player){
-		PlayerInventory inv = player.getInventory();
+		StringWriter itemStr = new StringWriter();
+		Json.writeItems(new JsonWriter(itemStr), player.getInventory().getContents());
 		
-		String invString = inv == null ? "empty" : "";
-		if(inv != null)
-			for(ItemStack stack : inv.getContents())
-				invString += Utils.itemToString(stack) + itemSeparator;
-		
-		String armorString = inv == null ? "empty" : "";
-		if(inv != null){
-			armorString += Utils.itemToString(inv.getHelmet()) + itemSeparator;
-			armorString += Utils.itemToString(inv.getChestplate()) + itemSeparator;
-			armorString += Utils.itemToString(inv.getLeggings()) + itemSeparator;
-			armorString += Utils.itemToString(inv.getBoots()) + itemSeparator;
-		}
+		StringWriter armorStr = new StringWriter();
+		Json.writeItems(new JsonWriter(armorStr), player.getInventory().getArmorContents());
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
 			if(!existsTest.first())
 				conn.prepareStatement(add_player_inventory.replace(player_macro, player.getName())).execute();
 			
-			conn.prepareStatement(update_player_inventory.replace(player_macro, player.getName()).replace(value_macro, invString)).executeUpdate();
-			conn.prepareStatement(update_player_armor.replace(player_macro, player.getName()).replace(value_macro, armorString)).executeUpdate();
+			conn.prepareStatement(update_player_inventory.replace(player_macro, player.getName()).replace(value_macro, itemStr.toString())).executeUpdate();
+			conn.prepareStatement(update_player_armor.replace(player_macro, player.getName()).replace(value_macro, armorStr.toString())).executeUpdate();
 			
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 	}
 	
 	public void loadInventory(Player player) {
-		String invString = "empty";
-		String armorString = "empty";
+		String itemStr = "empty";
+		String armorStr = "empty";
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
@@ -220,53 +213,38 @@ public class SQLHandler {
 			
 			ResultSet result = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
 			if(result.first())
-				invString = result.getString(inventory_column);
+				itemStr = result.getString(inventory_column);
 			
 			result = conn.prepareStatement(get_player_armor.replace(player_macro, player.getName())).executeQuery();
 			if(result.first())
-				armorString = result.getString(armor_column);
+				armorStr = result.getString(armor_column);
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		PlayerInventory inv = player.getInventory();
-		if(invString != null && !invString.equals("empty")){
-			int index = 0;
-			for(String itemString : invString.split(itemSeparator)){
-				inv.setItem(index, Utils.itemFromString(itemString));
-				index++;
-			}
-		}
-		if(armorString != null && !armorString.equals("empty")){
-			String[] armorStrings = armorString.split(itemSeparator);
-			inv.setHelmet(Utils.itemFromString(armorStrings[0]));
-			inv.setChestplate(Utils.itemFromString(armorStrings[1]));
-			inv.setLeggings(Utils.itemFromString(armorStrings[2]));
-			inv.setBoots(Utils.itemFromString(armorStrings[3]));
-		}
+
+		player.getInventory().setContents(Json.readItems(new JsonReader(new StringReader(itemStr))).toArray(new ItemStack[36]));
+		player.getInventory().setArmorContents(Json.readItems(new JsonReader(new StringReader(armorStr))).toArray(new ItemStack[4]));
 	}
 	
 	public void setInventory(OfflinePlayer player, Inventory inv){
-		
-		String invString = inv == null ? "empty" : "";
-		if(inv != null)
-			for(ItemStack stack : inv.getContents())
-				invString += Utils.itemToString(stack) + itemSeparator;
+
+		StringWriter invStr = new StringWriter();
+		Json.writeItems(new JsonWriter(invStr), inv.getContents());
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
 			if(!existsTest.first())
 				conn.prepareStatement(add_player_inventory.replace(player_macro, player.getName())).execute();
 			
-			conn.prepareStatement(update_player_inventory.replace(player_macro, player.getName()).replace(value_macro, invString)).executeUpdate();
+			conn.prepareStatement(update_player_inventory.replace(player_macro, player.getName()).replace(value_macro, invStr.toString())).executeUpdate();
 			
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 	}
 
 	public Inventory getInventory(OfflinePlayer player) {
-		String invString = "empty";
+		String invStr = "empty";
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
@@ -275,43 +253,35 @@ public class SQLHandler {
 			
 			ResultSet result = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
 			if(result.first())
-				invString = result.getString(inventory_column);
+				invStr = result.getString(inventory_column);
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		Inventory inv = Bukkit.createInventory(null, InventoryType.PLAYER);
-		if(invString != null && !invString.equals("empty")){
-			int index = 0;
-			for(String itemString : invString.split(itemSeparator)){
-				inv.setItem(index, Utils.itemFromString(itemString));
-				index++;
-			}
-		}
+		inv.setContents(Json.readItems(new JsonReader(new StringReader(invStr))).toArray(new ItemStack[36]));
 		return inv;
 	}
 	
 	public void saveChest(OfflinePlayer player, Inventory inv){
-		
-		String invString = inv == null ? "empty" : "";
-		if(inv != null)
-			for(ItemStack stack : inv.getContents())
-				invString += Utils.itemToString(stack) + itemSeparator;
+
+		StringWriter invStr = new StringWriter();
+		Json.writeItems(new JsonWriter(invStr), inv.getContents());
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
 			if(!existsTest.first())
 				conn.prepareStatement(add_player_inventory.replace(player_macro, player.getName())).execute();
 			
-			conn.prepareStatement(update_player_chest.replace(player_macro, player.getName()).replace(value_macro, invString)).executeUpdate();
+			conn.prepareStatement(update_player_chest.replace(player_macro, player.getName()).replace(value_macro, invStr.toString())).executeUpdate();
 			
 		}
 		catch (SQLException e) { e.printStackTrace(); }
 	}
 	
 	public Inventory loadChest(OfflinePlayer player) {
-		String invString = "empty";
+		String invStr = "empty";
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
@@ -320,20 +290,14 @@ public class SQLHandler {
 			
 			ResultSet result = conn.prepareStatement(get_player_chest.replace(player_macro, player.getName())).executeQuery();
 			if(result.first())
-				invString = result.getString(chest_column);
+				invStr = result.getString(chest_column);
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		Inventory inv = Bukkit.createInventory(null, 27, player.getName() + "'s storage");
-		if(invString != null && !invString.equals("empty")){
-			int index = 0;
-			for(String itemString : invString.split(itemSeparator)){
-				inv.setItem(index, Utils.itemFromString(itemString));
-				index++;
-			}
-		}
+		Json.readItems(new JsonReader(new StringReader(invStr))).toArray(new ItemStack[27]);
 		return inv;
 	}
 	
