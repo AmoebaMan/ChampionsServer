@@ -1,43 +1,34 @@
 package net.amoebaman.championsserver.utils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.*;
 import java.util.Map.Entry;
 
-import net.amoebaman.championsserver.ChampionsServer;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
+import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonReader;
+import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonWriter;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.potion.PotionEffectType;
 
-import com.google.common.collect.Lists;
+import net.amoebaman.championsserver.ChampionsServer;
+import net.minecraft.util.com.google.gson.stream.JsonToken;
 
 public class Utils {
-    
-    public static LivingEntity getCulprit(EntityDamageByEntityEvent event){
-        if(event.getDamager() instanceof LivingEntity)
-            return (LivingEntity) event.getDamager();
-        else if(event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof LivingEntity)
-            return (LivingEntity) ((Projectile) event.getDamager()).getShooter();
-        else
-            return null;
-    }
-	
+
+	public static LivingEntity getCulprit(EntityDamageByEntityEvent event){
+		if(event.getDamager() instanceof LivingEntity)
+			return (LivingEntity) event.getDamager();
+		else if(event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof LivingEntity)
+			return (LivingEntity) ((Projectile) event.getDamager()).getShooter();
+		else
+			return null;
+	}
+
 	public static String friendlyItemString(ItemStack stack){
 		String str = stack.getItemMeta().hasDisplayName() ? stack.getItemMeta().getDisplayName() : stack.getType().name().toLowerCase().replace("_", " ") + (stack.getAmount() > 1 ? "s" : "");
 		str = stack.getAmount() + " " + str;
@@ -52,8 +43,8 @@ public class Utils {
 		}
 		return str;
 	}
-	
-	
+
+
 	private static final String[] romanNumerals = new String[]{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 	private static final int[] ints = new int[]{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
 	public static String romanNumerals(int number){
@@ -67,7 +58,7 @@ public class Utils {
 			}
 		return roman;
 	}
-	
+
 	public static String capitalize(String str){
 		String[] words = str.split(" ");
 		String result = "";
@@ -80,108 +71,159 @@ public class Utils {
 			}
 		return result.trim();
 	}
-	
-	private static final String keySeparator = "~k~";
-	private static final String listSeparator = "~l~";
-	
+
 	public static String itemToString(ItemStack stack){
 		if(stack == null || stack.getType() == Material.AIR)
 			return "null";
-		
-		String itemString = "type=" + stack.getType().name() + keySeparator;
-		itemString += "data=" + stack.getDurability() + keySeparator;
-		itemString += "amount=" + stack.getAmount() + keySeparator;
-		
-		for(Enchantment enc : stack.getEnchantments().keySet())
-			itemString += enc.getName() + "=" + stack.getEnchantmentLevel(enc) + keySeparator;
-		
-		if(stack.hasItemMeta()){
-			ItemMeta meta = stack.getItemMeta();
-			if(meta.hasDisplayName())
-				itemString += "displayname=" + meta.getDisplayName() + keySeparator;
-			if(meta.hasLore()){
-				String loreString = "";
-				boolean first = true;
-				for(String str : meta.getLore()){
-					if(!first)
-						loreString += listSeparator;
-					loreString += str;
-					first = false;
-				}
-				itemString += "lore=" + loreString + keySeparator;
+
+		try{
+			StringWriter string = new StringWriter();
+			JsonWriter json = new JsonWriter(string);
+
+			json.beginObject();
+			json.name("type").value(stack.getType().name());
+			json.name("data").value(stack.getDurability());
+			json.name("amount").value(stack.getAmount());
+
+			json.name("enchants").beginObject();
+			for(Enchantment enc : stack.getEnchantments().keySet())
+				json.name(enc.getName()).value(stack.getEnchantmentLevel(enc));
+			if(stack.hasItemMeta() && stack.getItemMeta() instanceof EnchantmentStorageMeta){
+				EnchantmentStorageMeta meta = (EnchantmentStorageMeta) stack.getItemMeta();
+				for(Enchantment enc : meta.getEnchants().keySet())
+					json.name(enc.getName()).value(meta.getEnchantLevel(enc));
 			}
-			if(meta instanceof LeatherArmorMeta)
-				itemString += "leathercolor=" + ((LeatherArmorMeta) meta).getColor().asRGB() + keySeparator;
-			if(meta instanceof SkullMeta)
-				itemString += "skullowner=" + ((SkullMeta) meta).getOwner() + keySeparator;
-			if(meta instanceof EnchantmentStorageMeta)
-				for(Enchantment enc : ((EnchantmentStorageMeta) meta).getEnchants().keySet())
-					itemString += enc.getName() + "=" + ((EnchantmentStorageMeta) meta).getEnchantLevel(enc) + keySeparator;
+			json.endObject();
+
+			if(stack.hasItemMeta()){
+				ItemMeta meta = stack.getItemMeta();
+				json.name("meta").beginObject();
+
+				if(meta.hasDisplayName())
+					json.name("name").value(meta.getDisplayName());
+				if(meta.hasLore()){
+					json.name("lore").beginArray();
+					for(String line : meta.getLore())
+						json.value(line);
+					json.endArray();
+				}
+				if(meta instanceof LeatherArmorMeta)
+					json.name("color").value(((LeatherArmorMeta) meta).getColor().asRGB());
+				if(meta instanceof SkullMeta)
+					json.name("skull").value(((SkullMeta) meta).getOwner());
+				if(meta instanceof MapMeta)
+					json.name("map").value(((MapMeta) meta).isScaling());
+
+				json.endObject();
+			}
+			json.endObject();
+			json.close();
+			
+			return string.toString();
 		}
-		
-		return itemString.trim();
+		catch(Exception e){
+			e.printStackTrace();
+			return "null";
+		}
 	}
-	
+
 	public static ItemStack itemFromString(String str){
 		if(str == null || str.equals("null"))
 			return null;
-		
-		ItemStack stack = new ItemStack(Material.getMaterial(valueFromKeyInString(str, "type")));
-		stack.setDurability(Short.parseShort(valueFromKeyInString(str, "data")));
-		stack.setAmount(Integer.parseInt(valueFromKeyInString(str, "amount")));
-		
-		ItemMeta meta = Bukkit.getItemFactory().getItemMeta(stack.getType());
-		
-		for(Enchantment enc : Enchantment.values())
-			if(stringContainsKey(str, enc.getName())){
-				if(meta instanceof EnchantmentStorageMeta)
-					((EnchantmentStorageMeta) meta).addEnchant(enc, Integer.parseInt(valueFromKeyInString(str, enc.getName())), true);
-				else
-					meta.addEnchant(enc, Integer.parseInt(valueFromKeyInString(str, enc.getName())), true);
+
+		ItemStack item = new ItemStack(Material.AIR);
+		ItemMeta meta = Bukkit.getItemFactory().getItemMeta(item.getType());
+		JsonReader json = new JsonReader(new StringReader(str));
+
+		try{
+			json.beginObject();
+
+			while(json.hasNext() && !json.peek().equals(JsonToken.END_OBJECT)){
+				String name = json.nextName();
+				if(name.equals("type")){
+					item.setType(Material.getMaterial(json.nextString()));
+					meta = Bukkit.getItemFactory().getItemMeta(item.getType());
+				}
+				if(name.equals("data"))
+					item.setDurability((short) json.nextInt());
+				if(name.equals("amount"))
+					item.setAmount(json.nextInt());
+				if(name.equals("enchants")){
+					json.beginObject();
+					while(!json.peek().equals(JsonToken.END_OBJECT))
+						if(meta instanceof EnchantmentStorageMeta)
+							((EnchantmentStorageMeta) meta).addEnchant(Enchantment.getByName(json.nextName()), json.nextInt(), true);
+						else
+							meta.addEnchant(Enchantment.getByName(json.nextName()), json.nextInt(), true);
+					json.endObject();
+				}
+
+				if(name.equals("meta")){
+					json.beginObject();
+					while(!json.peek().equals(JsonToken.END_OBJECT)){
+						name = json.nextName();
+						if(name.equals("name"))
+							meta.setDisplayName(json.nextString());
+						if(name.equals("lore")){
+							json.beginArray();
+							List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<String>();
+							while(!json.peek().equals(JsonToken.END_ARRAY))
+								lore.add(json.nextString());
+							meta.setLore(lore);
+							json.endArray();
+						}
+						if(name.equals("color"))
+							try{ ((LeatherArmorMeta) meta).setColor(Color.fromRGB(json.nextInt())); } catch(Exception e){}
+						if(name.equals("skull"))
+							try{ ((SkullMeta) meta).setOwner(json.nextString()); } catch(Exception e){}
+						if(name.equals("map"))
+							try{ ((MapMeta) meta).setScaling(json.nextBoolean()); } catch(Exception e){}
+					}
+					json.endObject();
+				}
 			}
+
+			json.endObject();
+			json.close();
+		}
+		catch(Exception e){ e.printStackTrace(); }
+
+		item.setItemMeta(meta);
+		return item;
+	}
+	
+	public static String jsonSave(Map<String, String> map){
+		StringWriter string = new StringWriter();
 		
-		if(stringContainsKey(str, "displayname"))
-			meta.setDisplayName(valueFromKeyInString(str, "displayname"));
-		if(stringContainsKey(str, "lore"))
-			meta.setLore(Lists.newArrayList(valueFromKeyInString(str, "lore").split(listSeparator)));
-		if(stringContainsKey(str, "leathercolor") && meta instanceof LeatherArmorMeta)
-			((LeatherArmorMeta) meta).setColor(Color.fromRGB(Integer.parseInt(valueFromKeyInString(str, "leathercolor"))));
-		if(stringContainsKey(str, "skullowner") && meta instanceof SkullMeta)
-			((SkullMeta) meta).setOwner(valueFromKeyInString(str, "skullowner"));
+		try{
+			JsonWriter json = new JsonWriter(string);
+			json.beginObject();
+			for(Entry<String, String> entry : map.entrySet())
+				json.name(entry.getKey()).value(entry.getValue());
+			json.endObject();
+			json.close();
+		}
+		catch(Exception e){}
 		
-		stack.setItemMeta(meta);
+		return string.toString();
+	}
+	
+	public static Map<String, String> jsonLoad(String str){
+		Map<String, String> map = new HashMap<String, String>();
 		
-		return stack;
+		try{
+			JsonReader json = new JsonReader(new StringReader(str));
+			json.beginObject();
+			while(!json.peek().equals(JsonToken.END_OBJECT))
+				map.put(json.nextName(), json.nextString());
+			json.endObject();
+			json.close();
+		}
+		catch(Exception e){}
+		
+		return map;
 	}
-	
-	public static boolean stringContainsKey(String str, String key){
-		return str.contains(keySeparator + key);
-	}
-	
-	public static String valueFromKeyInString(String str, String key){
-		if(!str.contains(key))
-			return null;
-		return str.substring(str.indexOf(key) + key.length() + 1, str.indexOf(keySeparator, str.indexOf(key)));
-	}
-	
-	public static String generateDataString(Map<String, String> data){
-		String str = "";
-		for(Entry<String, String> entry : data.entrySet())
-			str += keySeparator + entry.getKey() + "=" + entry.getValue();
-		str += keySeparator;
-		return str;
-	}
-	
-	public static Map<String, String> parseDataString(String str){
-		Map<String, String> data = new HashMap<String, String>();
-		if(!str.contains(keySeparator))
-			return data;
-		for(String sub : str.split(keySeparator))
-			if(sub.contains("="))
-				data.put(sub.substring(0, sub.indexOf('=')), sub.substring(sub.indexOf('=') + 1));
-		return data;
-	}
-	
+
 	public static double centerAngle(double angle, double center){
 		while(angle >= center + 180)
 			angle -= 360;
@@ -189,7 +231,7 @@ public class Utils {
 			angle += 360;
 		return angle;
 	}
-	
+
 	public static String getPotionEffectName(PotionEffectType effect){
 		if(effect == null)
 			return "null";
@@ -218,7 +260,7 @@ public class Utils {
 		if(effect.equals(PotionEffectType.SATURATION)) return "saturation";
 		return "unknown";
 	}
-	
+
 	public static String getEnchantmentName(Enchantment enc){
 		if(enc.equals(Enchantment.ARROW_DAMAGE)) return "power";
 		if(enc.equals(Enchantment.ARROW_FIRE)) return "flame";
@@ -244,25 +286,25 @@ public class Utils {
 		if(enc.equals(Enchantment.WATER_WORKER)) return "aqua affinity";
 		return null;
 	}
-	
+
 	public static Inventory entityGearToInv(EntityEquipment gear){
 		Inventory inv = Bukkit.createInventory(null, 9);
 		inv.addItem(gear.getItemInHand(), gear.getHelmet(), gear.getChestplate(), gear.getLeggings(), gear.getBoots());
 		return inv;
 	}
-	
+
 	public static long timeSinceLastPlay(OfflinePlayer player){
 		return System.currentTimeMillis() - player.getLastPlayed();
 	}
-	
+
 	public static int hoursToMillis(int hours){
 		return 1000 * 60 * 60 * hours;
 	}
-	
+
 	public static boolean shouldRespawnItem(Item item){
 		return item == null || !item.isValid() || item.getLocation().getY() < 0 || item.getLocation().getBlock().isLiquid();
 	}
-	
+
 	public static boolean checkAndKillExtras(OfflinePlayer player, ItemStack stack, boolean wipeAll){
 		Inventory inv = null;
 		boolean found = false;
@@ -300,8 +342,8 @@ public class Utils {
 				player.getPlayer().getItemOnCursor().setAmount(1);
 			found = true;
 		}
-		
+
 		return found;
 	}
-	
+
 }
