@@ -1,19 +1,17 @@
 package net.amoebaman.championsserver;
 
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.sql.*;
 import java.util.*;
 
-import net.amoebaman.utils.Json;
+import net.amoebaman.utils.JsonReader;
+import net.amoebaman.utils.JsonWriter;
 
 import org.bukkit.*;
-import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonReader;
-import org.bukkit.craftbukkit.libs.com.google.gson.stream.JsonWriter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.*;
 
+@SuppressWarnings("resource")
 public class SQLHandler {
 	
 	Connection conn = null;
@@ -184,11 +182,9 @@ public class SQLHandler {
 	}
 	
 	public void saveInventory(Player player){
-		StringWriter itemStr = new StringWriter();
-		Json.writeItems(new JsonWriter(itemStr), player.getInventory().getContents());
 		
-		StringWriter armorStr = new StringWriter();
-		Json.writeItems(new JsonWriter(armorStr), player.getInventory().getArmorContents());
+		String itemStr = new JsonWriter().writeItemList(player.getInventory().getContents()).closeOut();
+		String armorStr = new JsonWriter().writeItemList(player.getInventory().getArmorContents()).closeOut();
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
@@ -223,14 +219,13 @@ public class SQLHandler {
 			e.printStackTrace();
 		}
 
-		player.getInventory().setContents(Json.readItems(new JsonReader(new StringReader(itemStr))).toArray(new ItemStack[36]));
-		player.getInventory().setArmorContents(Json.readItems(new JsonReader(new StringReader(armorStr))).toArray(new ItemStack[4]));
+		player.getInventory().setContents(new JsonReader(itemStr).readItemList().toArray(new ItemStack[36]));
+		player.getInventory().setArmorContents(new JsonReader(armorStr).readItemList().toArray(new ItemStack[4]));
 	}
 	
 	public void setInventory(OfflinePlayer player, Inventory inv){
 
-		StringWriter invStr = new StringWriter();
-		Json.writeItems(new JsonWriter(invStr), inv.getContents());
+		String invStr = new JsonWriter().writeItemList(inv.getContents()).closeOut();
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
@@ -243,7 +238,7 @@ public class SQLHandler {
 		catch (SQLException e) { e.printStackTrace(); }
 	}
 
-	public Inventory getInventory(OfflinePlayer player) {
+    public Inventory getInventory(OfflinePlayer player) {
 		String invStr = "empty";
 		
 		try{
@@ -260,14 +255,13 @@ public class SQLHandler {
 		}
 		
 		Inventory inv = Bukkit.createInventory(null, InventoryType.PLAYER);
-		inv.setContents(Json.readItems(new JsonReader(new StringReader(invStr))).toArray(new ItemStack[36]));
+		inv.setContents(new JsonReader(invStr).readItemList().toArray(new ItemStack[36]));
 		return inv;
 	}
 	
 	public void saveChest(OfflinePlayer player, Inventory inv){
 
-		StringWriter invStr = new StringWriter();
-		Json.writeItems(new JsonWriter(invStr), inv.getContents());
+		String invStr = new JsonWriter().writeItemList(inv.getContents()).closeOut();
 		
 		try{
 			ResultSet existsTest = conn.prepareStatement(get_player_inventory.replace(player_macro, player.getName())).executeQuery();
@@ -297,7 +291,7 @@ public class SQLHandler {
 		}
 		
 		Inventory inv = Bukkit.createInventory(null, 27, player.getName() + "'s storage");
-		Json.readItems(new JsonReader(new StringReader(invStr))).toArray(new ItemStack[27]);
+		inv.setContents(new JsonReader(invStr).readItemList().toArray(new ItemStack[27]));
 		return inv;
 	}
 	
