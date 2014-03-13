@@ -73,7 +73,7 @@ public class ChampionsServer extends JavaPlugin{
 	/** A list of all physical item drops representing legendary items */
 	public static final Map<String, Item> legendItems = new HashMap<String, Item>();
 	
-    public void onEnable(){
+	public void onEnable(){
 		
 		Bukkit.getPluginManager().registerEvents(new EventListener(), this);
 		Bukkit.getPluginManager().registerEvents(new TradeHandler(), this);
