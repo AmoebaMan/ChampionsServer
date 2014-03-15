@@ -1,7 +1,10 @@
 package net.amoebaman.championsserver;
 
-import net.amoebaman.utils.ChatUtils;
 import net.amoebaman.utils.CommandController.CommandHandler;
+import net.amoebaman.utils.chat.Chat;
+import net.amoebaman.utils.chat.Message;
+import net.amoebaman.utils.chat.Scheme;
+
 import net.minecraft.util.com.google.common.collect.Lists;
 
 import org.bukkit.Bukkit;
@@ -14,9 +17,11 @@ import org.bukkit.inventory.ItemStack;
 public class CommandListener {
 
     @CommandHandler(cmd = "check-pt")
-    public void checkPtCommand(Player player, String[] args){
-        player.sendMessage(ChatColor.ITALIC + "That " + TradeHandler.getName(player.getItemInHand()) + " is worth " + ChampionsServer.getPtValue(player.getItemInHand()) + "PT");
-        player.sendMessage(ChatColor.ITALIC + "Your inventory is worth " + ChampionsServer.getPtValue(player.getInventory()) + "PT");
+    public Object checkPtCommand(Player player, String[] args){
+    	return Lists.newArrayList(
+    		new Message(Scheme.NORMAL).t("That" ).t(TradeHandler.getName(player.getItemInHand())).s().t(" is worth ").t(ChampionsServer.getPtValue(player.getItemInHand())).s().t("PT"),
+    		new Message(Scheme.NORMAL).t("Your inventory is worth ").t(ChampionsServer.getPtValue(player.getInventory())).s().t("PT")
+        );
     }
 
     @CommandHandler(cmd = "view-storage-chest")
@@ -59,7 +64,7 @@ public class CommandListener {
                     sender.sendMessage(ChatColor.YELLOW + "Nobody holds Wellspring Shard #" + (i+1));
                 else{
                     int offlineHours = (int) ((System.currentTimeMillis() - holder.getLastPlayed()) / 1000.0 / 60.0 / 60.0);
-                    sender.sendMessage(ChatColor.RED + holder.getName() + " holds Wellspring Shard #" + (i+1) + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, ShardHandler.shardOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
+                    sender.sendMessage(ChatColor.RED + holder.getName() + " holds Wellspring Shard #" + (i+1) + (holder.isOnline() ? "" : " " + Chat.makeProgressBar(40, ShardHandler.shardOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
                 }
             }
         else
@@ -69,7 +74,7 @@ public class CommandListener {
                 sender.sendMessage(ChatColor.YELLOW + "Nobody holds the Wellspring Charm");
             else{
                 int offlineHours = (int) ((System.currentTimeMillis() - holder.getLastPlayed()) / 1000.0 / 60.0 / 60.0);
-                sender.sendMessage(ChatColor.RED + holder.getName() + " holds the Wellspring Charm" + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, ShardHandler.shardOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
+                sender.sendMessage(ChatColor.RED + holder.getName() + " holds the Wellspring Charm" + (holder.isOnline() ? "" : " " + Chat.makeProgressBar(40, ShardHandler.shardOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
             }
     }
 
@@ -92,7 +97,7 @@ public class CommandListener {
                 sender.sendMessage(ChatColor.YELLOW + "Nobody holds " + TradeHandler.getName(legend));
             else{
                 int offlineHours = (int) ((System.currentTimeMillis() - holder.getLastPlayed()) / 1000.0 / 60.0 / 60.0);
-                sender.sendMessage(ChatColor.RED + holder.getName() + " holds " + TradeHandler.getName(legend) + (holder.isOnline() ? "" : " " + ChatUtils.makeProgressBar(40, LegendaryHandler.legendOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
+                sender.sendMessage(ChatColor.RED + holder.getName() + " holds " + TradeHandler.getName(legend) + (holder.isOnline() ? "" : " " + Chat.makeProgressBar(40, LegendaryHandler.legendOfflineTimeoutHours, Lists.newArrayList(ChatColor.DARK_RED, ChatColor.DARK_GREEN), Lists.newArrayList(offlineHours))));
             }
         }
     }
